@@ -19,6 +19,12 @@ public class StudentStats implements DomainEntity {
     @ManyToOne
     private TeacherDashboard teacherDashboard;
 
+    private int numStudents;
+
+    private int numMore75CorrectQuestions;
+
+    private int numAtLeast3Quizzes;
+
     public StudentStats() {
     }
 
@@ -29,6 +35,23 @@ public class StudentStats implements DomainEntity {
 
     public Integer getId() {
         return id;
+    }
+
+    public int getNumStudents() {return numStudents;}
+
+    public void setNumStudents(int numStudents) {this.numStudents = numStudents;
+    }
+
+    public int getNumMore75CorrectQuestions() {return numMore75CorrectQuestions;
+    }
+
+    public void setNumMore75CorrectQuestions(int numMore75CorrectQuestions) {this.numMore75CorrectQuestions = numMore75CorrectQuestions;
+    }
+
+    public int getNumAtLeast3Quizzes() {return numAtLeast3Quizzes;
+    }
+
+    public void setNumAtLeast3Quizzes(int numAtLeast3Quizzes) {this.numAtLeast3Quizzes = numAtLeast3Quizzes;
     }
 
     public CourseExecution getCourseExecution() {
@@ -47,12 +70,19 @@ public class StudentStats implements DomainEntity {
         this.teacherDashboard = teacherDashboard;
     }
 
+    public void update(){
+        //TO DO
+    }
+
     @Override
     public String toString() {
         return "StudentStats{" +
                 "id=" + id +
                 ", courseExecution=" + courseExecution +
                 ", teacherDashboard=" + teacherDashboard +
+                ", numStudents=" + numStudents +
+                ", numMore75CorrectQuestions=" + numMore75CorrectQuestions +
+                ", getNumAtLeast3Quizzes=" + numAtLeast3Quizzes +
                 '}';
     }
 
