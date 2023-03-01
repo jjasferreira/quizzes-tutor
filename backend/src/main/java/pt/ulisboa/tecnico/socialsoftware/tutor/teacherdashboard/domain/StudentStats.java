@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
 
@@ -68,6 +69,16 @@ public class StudentStats implements DomainEntity {
 
     public void setTeacherDashboard(TeacherDashboard teacherDashboard) {
         this.teacherDashboard = teacherDashboard;
+    }
+
+    public int getTotalStudentNumber(){
+        int studentCount = 0;
+        for (User user: getCourseExecution().getUsers()){
+            if (user.getRole() == User.Role.STUDENT){
+                studentCount++;
+            }
+        }
+        return studentCount;
     }
 
     public void update(){
