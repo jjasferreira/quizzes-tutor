@@ -1,5 +1,4 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain
-//package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -68,6 +67,22 @@ class GetAvailableQuestionsTest extends SpockTest{
         then:
             stats.getNumAvailable() == 3
 
+    }
+
+    def "getNumberOfQuestionsOneNotAvaliable"() {
+        given:
+            def question4 = new Question()
+            question4.setCourse(externalCourse)
+            question4.setStatus(Question.Status.AVAILABLE)
+            
+            def question5 = new Question()
+            question5.setCourse(externalCourse)
+            question5.setStatus(Question.Status.DISABLED)
+            QuestionStats stats = new QuestionStats(courseExecution)
+        when:
+            stats.update()
+        then:
+            stats.getNumAvailable() == 4
     }
 
     @TestConfiguration
