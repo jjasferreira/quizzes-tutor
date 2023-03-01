@@ -4,11 +4,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher;
-
-import java.util.List;
-import java.util.ArrayList;
-
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +26,9 @@ public class TeacherDashboard implements DomainEntity {
 
     @ManyToOne
     private Teacher teacher;
+
+    @OneToMany
+    private final Set<StudentStats> studentStats = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "teacherDashboard", orphanRemoval = true)
     private List<QuizStats> quizStats = new ArrayList<>();
@@ -66,6 +67,14 @@ public class TeacherDashboard implements DomainEntity {
         this.teacher.addDashboard(this);
     }
 
+    public Set<StudentStats> getStudentStats() {
+        return studentStats;
+    }
+
+    public void addStudentStats(StudentStats studentStats) {
+        this.studentStats.add(studentStats);
+    }
+
     public void accept(Visitor visitor) {
         // Only used for XML generation
     }
@@ -87,6 +96,7 @@ public class TeacherDashboard implements DomainEntity {
     }
     public void update() {
         this.quizStats.forEach(QuizStats::update);
+        this.studentStats.forEach(StudentStats::update);
     }
 
 }
