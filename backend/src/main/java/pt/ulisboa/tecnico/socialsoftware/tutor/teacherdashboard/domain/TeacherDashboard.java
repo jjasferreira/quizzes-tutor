@@ -5,11 +5,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import javax.persistence.*;
 
 
 @Entity
 public class TeacherDashboard implements DomainEntity {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "teacherDashboard", orphanRemoval = true)
+    private List<QuestionStats> question = new ArrayList<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,6 +59,10 @@ public class TeacherDashboard implements DomainEntity {
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
         this.teacher.addDashboard(this);
+    }
+
+    public List<QuestionStats> getQuestionStats() {
+        return question;
     }
 
     public void accept(Visitor visitor) {
