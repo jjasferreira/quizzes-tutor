@@ -82,7 +82,7 @@ public class StudentStats implements DomainEntity {
     }
 
     public void update(){
-        //TO DO
+        setNumStudents(getTotalStudentNumber());
     }
 
     @Override
