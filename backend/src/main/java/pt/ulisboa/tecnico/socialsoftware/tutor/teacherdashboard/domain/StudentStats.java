@@ -1,11 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -79,6 +83,33 @@ public class StudentStats implements DomainEntity {
         }
         return studentCount;
     }
+
+    public Set<Student> getStudents(){
+        Set<Student> students = new HashSet<>();
+        for (User user: getCourseExecution().getUsers()){
+            if(user.isStudent()){
+                students.add((Student)user);
+            }
+        }
+        return  students;
+    }
+
+    public int getStudentsOver75Correct(){
+        int studentsCount = 0;
+        long questionsAnswered = 0;
+        long correctAnswers = 0;
+        for (Student student: getStudents()){
+            for (QuizAnswer answer: student.getQuizAnswers()){
+                questionsAnswered += answer.getNumberOfAnsweredQuestions();
+                correctAnswers += answer.getNumberOfCorrectAnswers();
+            }
+            if (correctAnswers > 0.75 * questionsAnswered){
+                studentsCount++;
+            }
+        }
+        return studentsCount;
+    }
+
 
     public void update(){
         setNumStudents(getTotalStudentNumber());
