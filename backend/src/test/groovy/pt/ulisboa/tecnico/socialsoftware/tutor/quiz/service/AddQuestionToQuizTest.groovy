@@ -1,55 +1,72 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.QuizStatsRepository
+
 
 @DataJpaTest
-class AddQuestionToQuizTest extends SpockTest {
+class GetAvailableQuizzesTest extends SpockTest {
+
+    @Autowired
+    QuizStatsRepository quizStatsRepository
+
     def setup() {
-        createExternalCourseAndExecution()
+        externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
+        courseRepository.save(externalCourse)
 
-        Quiz quiz = new Quiz()
-        quiz.setKey(1)
-        quiz.setTitle(QUIZ_TITLE)
-        quiz.setType(Quiz.QuizType.PROPOSED.toString())
-        quiz.setAvailableDate(LOCAL_DATE_BEFORE)
-        quiz.setCourseExecution(externalCourseExecution)
-        quiz.setOneWay(true)
-        quizRepository.save(quiz)
+        // Test case A: 3 available quizzes on a QuizStats
+        CourseExecution courseExecutionA = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
+        courseExecutionRepository.save(courseExecutionA)
+        QuizStats quizStatsA = new QuizStats(courseExecutionA)
+        quizStatsRepository.save(quizStatsA)
+        Quiz quiz1 = new Quiz()
+        quiz1.setCourseExecution(courseExecutionA)
+            // courseExecution.addQuiz(quiz1)
+        quizRepository.save(quiz1)
+        Quiz quiz2 = new Quiz()
+        quiz2.setCourseExecution(courseExecutionA)
+            // courseExecution.addQuiz(quiz2)
+        quizRepository.save(quiz2)
+        Quiz quiz3 = new Quiz()
+        quiz3.setCourseExecution(courseExecutionA)
+            // courseExecution.addQuiz(quiz3)
+        quizRepository.save(quiz3)
 
-        Question question = new Question()
-        question.setKey(1)
-        question.setCourse(externalCourse)
-        question.setTitle("Question title")
-        questionRepository.save(question)
+        // Test case B: 0 available quizzes on a QuizStats
+        CourseExecution courseExecutionB = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
+        courseExecutionRepository.save(courseExecutionB)
+        QuizStats quizStatsB = new QuizStats(courseExecutionB)
+        quizStatsRepository.save(quizStatsB)
     }
 
-    def 'add a question to a quiz' () {
+    def "getNumQuizzesWhen3Available"() {
         given:
-        def quizId = quizRepository.findAll().get(0).getId()
-        def questionId = questionRepository.findAll().get(0).getId()
-
+        QuizStats quizStats = quizStatsRepository.findAll().get(0)
+        Quiz quiz = quizRepository.findAll().get(0)
         when:
-        quizService.addQuestionToQuiz(questionId, quizId)
-
+        quizStats.update()
         then:
-        quizQuestionRepository.findAll().size() == 1
-        QuizQuestion quizQuestion = quizQuestionRepository.findAll().get(0)
-        quizQuestion.getId() != null
-        quizQuestion.getSequence() == 0
-        quizQuestion.getQuiz() != null
-        quizQuestion.getQuiz().getQuizQuestionsNumber() == 1
-        quizQuestion.getQuiz().getQuizQuestions().contains(quizQuestion)
-        quizQuestion.getQuestion() != null
-        quizQuestion.getQuestion().getQuizQuestions().size() == 1
-        quizQuestion.getQuestion().getQuizQuestions().contains(quizQuestion)
+        quizStats.getNumQuizzes() == 3
+        quizStats.getCourseExecution() == quiz.getCourseExecution()
+    }
+
+    def "getNumQuizzesWhen0Available"() {
+        given:
+        QuizStats quizStats = quizStatsRepository.findAll().get(1)
+        when:
+        quizStats.update()
+        then:
+        quizStats.getNumQuizzes() == 0
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration {}
+    static class LocalBeanConfiguration extends BeanConfiguration {  }
 }
