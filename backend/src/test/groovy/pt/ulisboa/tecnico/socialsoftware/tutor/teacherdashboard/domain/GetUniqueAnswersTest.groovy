@@ -25,7 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 
 
 @DataJpaTest
-class GetUniqueAnswers extends SpockTest{
+class GetUniqueAnswersTest extends SpockTest{
     def student
     def student2
     def question
@@ -56,18 +56,18 @@ class GetUniqueAnswers extends SpockTest{
         question.setKey(1)
         question.setCourse(externalCourse)
         question.setTitle("Question title")
-
-        quizquestion = new QuizQuestion(quiz, question, 1)
-
-        quizAnswer = new QuizAnswer(student, quiz)
-        QuestionAnswer questionAnswer = new QuestionAnswer(quizAnswer,quizquestion,1)
-        quizAnswer.addQuestionAnswer(questionAnswer)
-
-        quiz.addQuizQuestion(quizquestion)
     }
 
     def "getUniqueAnswersNoDuplicate"(){
         given:
+            quizquestion = new QuizQuestion(quiz, question, 1)
+
+            quizAnswer = new QuizAnswer(student, quiz)
+            QuestionAnswer questionAnswer = new QuestionAnswer(quizAnswer,quizquestion,1)
+            quizAnswer.addQuestionAnswer(questionAnswer)
+
+            quiz.addQuizQuestion(quizquestion)
+
             QuestionStats stats = new QuestionStats(externalCourseExecution)
 
         when:
@@ -79,6 +79,15 @@ class GetUniqueAnswers extends SpockTest{
 
     def "getUniqueAnswersDuplicate"(){
         given:
+
+        quizquestion = new QuizQuestion(quiz, question, 1)
+
+        quizAnswer = new QuizAnswer(student, quiz)
+        QuestionAnswer questionAnswer = new QuestionAnswer(quizAnswer,quizquestion,1)
+        quizAnswer.addQuestionAnswer(questionAnswer)
+
+        quiz.addQuizQuestion(quizquestion)
+
         QuestionStats stats = new QuestionStats(externalCourseExecution)
 
         Question question2 = new Question()
@@ -113,6 +122,28 @@ class GetUniqueAnswers extends SpockTest{
 
         then:
         stats.getAnsweredQuestionUnique() == 3
+
+    }
+
+    def "testInvalidAnswer"(){
+        given:
+        QuestionStats stats = new QuestionStats(externalCourseExecution)
+
+        QuizAnswer quizAnswer1 = new QuizAnswer()
+        quizAnswer1.setQuiz(quiz)
+
+
+        quizquestion = new QuizQuestion(quiz, question, 1)
+        QuestionAnswer questionAnswer = new QuestionAnswer(quizAnswer1,quizquestion,1)
+        quizAnswer1.addQuestionAnswer(questionAnswer)
+
+        quiz.addQuizQuestion(quizquestion)
+
+        when:
+        stats.update()
+
+        then:
+        stats.getAnsweredQuestionUnique() == 0
 
     }
 
