@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -82,10 +83,23 @@ public class QuizStats implements DomainEntity {
         this.averageQuizzesSolved = averageQuizzesSolved;
     }
 
-    public int getNumAvailableQuizzes(){
+    public int getNumQuizzesExecution() {
         int quizCount = 0;
-        for (Quiz quiz: getCourseExecution().getQuizzes()){
+        for (Quiz quiz: getCourseExecution().getQuizzes()) {
             quizCount++;
+        }
+        return quizCount;
+    }
+
+    public int getUniqueQuizzesSolvedExecution() {
+        int quizCount = 0;
+        for (Quiz quiz: getCourseExecution().getQuizzes()) {
+            for (QuizAnswer quizAnswer: quiz.getQuizAnswers()) {
+                if (quizAnswer.isCompleted()) {
+                    quizCount++;
+                    break;
+                }
+            }
         }
         return quizCount;
     }
@@ -107,7 +121,8 @@ public class QuizStats implements DomainEntity {
     }
 
     public void update(){
-        setNumQuizzes(getNumAvailableQuizzes());
+        setNumQuizzes(getNumQuizzesExecution());
+        setUniqueQuizzesSolved(getUniqueQuizzesSolvedExecution());
     }
 
 }
