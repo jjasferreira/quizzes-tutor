@@ -77,6 +77,45 @@ class GetUniqueAnswers extends SpockTest{
             stats.getAnsweredQuestionUnique() == 1
     }
 
+    def "getUniqueAnswersDuplicate"(){
+        given:
+        QuestionStats stats = new QuestionStats(externalCourseExecution)
+
+        Question question2 = new Question()
+        question2.setKey(2)
+        question2.setCourse(externalCourse)
+        question2.setTitle("Question title")
+
+        Question question3 = new Question()
+        question3.setKey(3)
+        question3.setCourse(externalCourse)
+        question3.setTitle("Question title")
+
+        def quizquestion2 = new QuizQuestion(quiz, question2, 2)
+        def quizquestion3 = new QuizQuestion(quiz, question3, 3)
+
+        QuizAnswer quizAnswer2 = new QuizAnswer(student2, quiz)
+        QuizAnswer quizAnswer1 = new QuizAnswer(student, quiz)
+
+        QuestionAnswer questionAnswer2 = new QuestionAnswer(quizAnswer2,quizquestion,1)
+        QuestionAnswer questionAnswer3 = new QuestionAnswer(quizAnswer2,quizquestion2,2)
+        QuestionAnswer questionAnswer4 = new QuestionAnswer(quizAnswer2,quizquestion3,3)
+        QuestionAnswer questionAnswer5 = new QuestionAnswer(quizAnswer1,quizquestion3,3)
+
+
+        quizAnswer.addQuestionAnswer(questionAnswer2)
+        quizAnswer.addQuestionAnswer(questionAnswer3)
+        quizAnswer.addQuestionAnswer(questionAnswer4)
+        quizAnswer.addQuestionAnswer(questionAnswer5)
+
+        when:
+        stats.update()
+
+        then:
+        stats.getAnsweredQuestionUnique() == 3
+
+    }
+
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {  }
 }
