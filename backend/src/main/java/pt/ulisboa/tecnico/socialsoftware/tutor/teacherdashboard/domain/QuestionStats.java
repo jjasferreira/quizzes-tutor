@@ -1,10 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.*;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 
 @Entity
@@ -45,6 +49,7 @@ public class QuestionStats implements DomainEntity {
 
     public void update() {
         this.numAvailable = getNumAvailableQuestions();
+        this.answeredQuestionUnique = getNumUniqueAnswers();
     }
 
     private int getNumAvailableQuestions() {
@@ -55,6 +60,18 @@ public class QuestionStats implements DomainEntity {
             }
         }
         return questionCounter;
+    }
+
+    private int getNumUniqueAnswers() {
+        Set<QuestionSubmission> uniqueSubmissions = new HashSet<>();
+
+        for(QuestionSubmission submission : this.execution.getQuestionSubmissions()) {
+            if(!uniqueSubmissions.contains(submission)) {
+                uniqueSubmissions.add(submission);
+            }
+        }
+
+        return uniqueSubmissions.size();
     }
 
     public void accept(Visitor visitor) {
