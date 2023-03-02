@@ -49,7 +49,7 @@ public class QuestionStats implements DomainEntity {
 
     public void update() {
         this.numAvailable = getNumAvailableQuestions();
-        this.answeredQuestionUnique = getNumUniqueAnswers();
+        this.answeredQuestionUnique = getNumUniqueQuestionsAnswered();
     }
 
     private int getNumAvailableQuestions() {
@@ -62,16 +62,16 @@ public class QuestionStats implements DomainEntity {
         return questionCounter;
     }
 
-    private int getNumUniqueAnswers() {
-        Set<QuestionSubmission> uniqueSubmissions = new HashSet<>();
+    private int getNumUniqueQuestionsAnswered() {
+        Set<Question> uniqueQuestionsAnswered = new HashSet<>();
 
         for(QuestionSubmission submission : this.execution.getQuestionSubmissions()) {
-            if(!uniqueSubmissions.contains(submission)) {
-                uniqueSubmissions.add(submission);
+            if(!uniqueQuestionsAnswered.contains(submission.getQuestion())) {
+                uniqueQuestionsAnswered.add(submission.getQuestion());
             }
         }
 
-        return uniqueSubmissions.size();
+        return uniqueQuestionsAnswered.size();
     }
 
     public void accept(Visitor visitor) {
