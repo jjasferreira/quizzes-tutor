@@ -110,6 +110,22 @@ public class StudentStats implements DomainEntity {
         return studentsCount;
     }
 
+    public int calculateNumAtLeast3Quizzes(){
+        int studentsCount = 0;
+        for (Student student: getStudents()){
+            int completedQuizzes = 0;
+            for (QuizAnswer answer: student.getQuizAnswers()){
+                if (answer.isCompleted()){
+                    completedQuizzes++;
+                }
+                if (completedQuizzes >= 3){
+                    studentsCount++;
+                    break;
+                }
+            }
+        }
+        return studentsCount;
+    }
 
     public void update(){
         setNumStudents(getTotalStudentNumber());
