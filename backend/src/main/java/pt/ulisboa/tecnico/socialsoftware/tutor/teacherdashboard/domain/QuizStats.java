@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
 import javax.persistence.*;
 
@@ -53,7 +54,6 @@ public class QuizStats implements DomainEntity {
         this.teacherDashboard = teacherDashboard;
     }
 
-
     public int getNumQuizzes() {
         return numQuizzes;
     }
@@ -78,6 +78,14 @@ public class QuizStats implements DomainEntity {
         this.averageQuizzesSolved = averageQuizzesSolved;
     }
 
+    public int getNumAvailableQuizzes(){
+        int quizCount = 0;
+        for (Quiz quiz: getCourseExecution().getQuizzes()){
+            quizCount++;
+        }
+        return quizCount;
+    }
+
     @Override
     public String toString() {
         return "QuizStats{id=" + id +
@@ -93,4 +101,9 @@ public class QuizStats implements DomainEntity {
     public void accept(Visitor visitor) {
         // Only used for XML generation
     }
+
+    public void update(){
+        setNumQuizzes(getNumAvailableQuizzes());
+    }
+
 }
