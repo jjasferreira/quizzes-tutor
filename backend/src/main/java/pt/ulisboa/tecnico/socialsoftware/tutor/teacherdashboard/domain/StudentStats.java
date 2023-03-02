@@ -130,6 +130,7 @@ public class StudentStats implements DomainEntity {
     public void update(){
         setNumStudents(getTotalStudentNumber());
         setNumMore75CorrectQuestions(getStudentsOver75Correct());
+        setNumAtLeast3Quizzes(calculateNumAtLeast3Quizzes());
     }
 
     @Override
