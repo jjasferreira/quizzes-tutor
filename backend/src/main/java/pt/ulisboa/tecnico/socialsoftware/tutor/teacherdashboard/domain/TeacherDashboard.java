@@ -82,10 +82,6 @@ public class TeacherDashboard implements DomainEntity {
         this.question.add(questionStat);
     }
 
-    public void update() {
-        this.question.forEach(QuestionStats::update);
-    }
-
     public List<QuestionStats> getQuestion() {return this.question;}
 
     @Override
@@ -106,6 +102,7 @@ public class TeacherDashboard implements DomainEntity {
     public void update() {
         this.quizStats.forEach(QuizStats::update);
         this.studentStats.forEach(StudentStats::update);
+        this.question.forEach(QuestionStats::update);
     }
 
 }
