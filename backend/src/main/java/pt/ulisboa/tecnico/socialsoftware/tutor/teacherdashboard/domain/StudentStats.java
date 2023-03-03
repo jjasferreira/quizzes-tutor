@@ -29,9 +29,8 @@ public class StudentStats implements DomainEntity {
     public StudentStats() {
     }
 
-    public StudentStats(CourseExecution courseExecution, TeacherDashboard teacherDashboard) {
+    public StudentStats(CourseExecution courseExecution) {
         setCourseExecution(courseExecution);
-        setTeacherDashboard(teacherDashboard);
     }
 
     public Integer getId() {
