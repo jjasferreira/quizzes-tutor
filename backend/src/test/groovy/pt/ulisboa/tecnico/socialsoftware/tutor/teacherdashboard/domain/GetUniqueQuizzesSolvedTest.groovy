@@ -30,134 +30,126 @@ class GetUniqueQuizzesSolvedTest extends SpockTest {
     def setup() {
         externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(externalCourse)
-
-        // Test case (1): 1 course executions, 0 quizzes, 0 students
-        def courseExecutionB = new CourseExecution(externalCourse, "C13", COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
-        courseExecutionRepository.save(courseExecutionB)
-        // Also test creation of TeacherDashboard
-        def teacherB = new Teacher()
-        teacherRepository.save(teacherB)
-        def teacherDashboardB = new TeacherDashboard(courseExecutionB, teacherB)
-        teacherDashboardRepository.save(teacherDashboardB)
-        def quizStatsB = new QuizStats(courseExecutionB, teacherDashboardB)
-        quizStatsRepository.save(quizStatsB)
-
-        // Test case (2): 1 course executions, 1 quizzes, 0 students
-        def courseExecutionC = new CourseExecution(externalCourse, "C14", COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
-        courseExecutionRepository.save(courseExecutionC)
-        def quizStatsC = new QuizStats(courseExecutionC)
-        quizStatsRepository.save(quizStatsC)
-        def quiz1 = new Quiz()
-        quiz1.setCourseExecution(courseExecutionC)
-        quizRepository.save(quiz1)
-
-        // Test case (3): 1 course executions, 1 quizzes, 1 students
-        def courseExecutionD = new CourseExecution(externalCourse, "C15", COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
-        courseExecutionRepository.save(courseExecutionD)
-        def quizStatsD = new QuizStats(courseExecutionD)
-        quizStatsRepository.save(quizStatsD)
-        def quiz2 = new Quiz()
-        quiz2.setCourseExecution(courseExecutionD)
-        def studentD = new Student()
-        studentRepository.save(studentD)
-        def quizAnswerD = new QuizAnswer(studentD, quiz2)
-        quizAnswerD.setCompleted(true)
-        quiz2.addQuizAnswer(quizAnswerD)
-        quizRepository.save(quiz2)
-        quizAnswerRepository.save(quizAnswerD)
-
-        // Test case (4): 1 course executions, 1 quizzes, 2 students
-        def courseExecutionE = new CourseExecution(externalCourse, "C16", COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
-        courseExecutionRepository.save(courseExecutionE)
-        def quizStatsE = new QuizStats(courseExecutionE)
-        quizStatsRepository.save(quizStatsE)
-        def quiz3 = new Quiz()
-        quiz3.setCourseExecution(courseExecutionE)
-        courseExecutionE.addQuiz(quiz3)
-        def studentE1 = new Student()
-        studentRepository.save(studentE1)
-        def quizAnswerE1 = new QuizAnswer(studentE1, quiz3)
-        quizAnswerE1.setCompleted(true)
-        quiz3.addQuizAnswer(quizAnswerE1)
-        def studentE2 = new Student()
-        studentRepository.save(studentE2)
-        def quizAnswerE2 = new QuizAnswer(studentE2, quiz3)
-        quizAnswerE2.setCompleted(true)
-        quiz3.addQuizAnswer(quizAnswerE2)
-        quizRepository.save(quiz3)
-        quizAnswerRepository.save(quizAnswerE1)
-        quizAnswerRepository.save(quizAnswerE2)
     }
 
     // Test case (1): 1 course executions, 0 quizzes, 0 students
-    def "test1Executions0Quizzes0Students"() {
+    def "test 1 executions 0 quizzes 0 students"() {
         given:
-        def quizStats = quizStatsRepository.findAll().get(0)
+        def courseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
+        courseExecutionRepository.save(courseExecution)
+        // Also test creation of TeacherDashboard
+        def teacher = new Teacher()
+        teacherRepository.save(teacher)
+        def teacherDashboard = new TeacherDashboard(courseExecution, teacher)
+        teacherDashboardRepository.save(teacherDashboard)
+        def quizStats = new QuizStats(courseExecution, teacherDashboard)
+        quizStatsRepository.save(quizStats)
 
         when:
         quizStats.update()
 
         then:
-        quizStats.getCourseExecution() != null
-        quizStats.getTeacherDashboard() != null
-        quizStats.getNumQuizzes() == 0
+        def quizStatsT = quizStatsRepository.findAll().get(0)
+        quizStatsT.getCourseExecution() != null
+        quizStatsT.getTeacherDashboard() != null
+        quizStatsT.getNumQuizzes() == 0
     }
 
     // Test case (2): 1 course executions, 1 quizzes, 0 students
-    def "test1Executions1Quizzes0Students"() {
+    def "test 1 executions 1 quizzes 0 students"() {
         given:
-        def quizStats = quizStatsRepository.findAll().get(1)
-        def quiz = quizRepository.findAll().get(0)
+        def courseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
+        courseExecutionRepository.save(courseExecution)
+        def quizStats = new QuizStats(courseExecution)
+        quizStatsRepository.save(quizStats)
+        def quiz = new Quiz()
+        quiz.setCourseExecution(courseExecution)
+        quizRepository.save(quiz)
 
         when:
         quizStats.update()
 
         then:
-        quizStats.getCourseExecution() == quiz.getCourseExecution()
-        quizStats.getNumQuizzes() == 1
-        quiz.getQuizAnswers().size() == 0
-        quizStats.getUniqueQuizzesSolved() == 0
+        def quizStatsT = quizStatsRepository.findAll().get(0)
+        def quizT = quizRepository.findAll().get(0)
+        quizStatsT.getCourseExecution() == quizT.getCourseExecution()
+        quizStatsT.getNumQuizzes() == 1
+        quizT.getQuizAnswers().size() == 0
+        quizStatsT.getUniqueQuizzesSolved() == 0
     }
 
     
     // Test case (3): 1 course executions, 1 quizzes, 1 students
-    def "test1Executions1Quizzes1Students"() {
+    def "test 1 executions 1 quizzes 1 students"() {
         given:
-        def quizStats = quizStatsRepository.findAll().get(2)
-        def quiz = quizRepository.findAll().get(1)
-        def quizAnswer = quizAnswerRepository.findAll().get(0)
+        def courseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
+        courseExecutionRepository.save(courseExecution)
+        def quizStats = new QuizStats(courseExecution)
+        quizStatsRepository.save(quizStats)
+        def quiz = new Quiz()
+        quiz.setCourseExecution(courseExecution)
+        def student = new Student()
+        studentRepository.save(student)
+        def quizAnswer = new QuizAnswer(student, quiz)
+        quizAnswer.setCompleted(true)
+        quiz.addQuizAnswer(quizAnswer)
+        quizRepository.save(quiz)
+        quizAnswerRepository.save(quizAnswer)
 
         when:
         quizStats.update()
 
         then:
-        quizStats.getCourseExecution() == quiz.getCourseExecution()
-        quizStats.getNumQuizzes() == 1
-        quiz.getQuizAnswers().contains(quizAnswer)
-        quizAnswer.getStudent() != null
-        quizStats.getUniqueQuizzesSolved() == 1
+        def quizStatsT = quizStatsRepository.findAll().get(0)
+        def quizT = quizRepository.findAll().get(0)
+        def quizAnswerT = quizAnswerRepository.findAll().get(0)
+        quizStatsT.getCourseExecution() == quiz.getCourseExecution()
+        quizStatsT.getNumQuizzes() == 1
+        quizT.getQuizAnswers().contains(quizAnswerT)
+        quizAnswerT.getStudent() != null
+        quizStatsT.getUniqueQuizzesSolved() == 1
     }
 
     // Test case (4): 1 course executions, 1 quizzes, 2 students
-    def "test1Executions1Quizzes2Students"() {
+    def "test 1 executions 1 quizzes 2 students"() {
         given:
-        def quizStats = quizStatsRepository.findAll().get(3)
-        def quiz = quizRepository.findAll().get(2)
-        def quizAnswer1 = quizAnswerRepository.findAll().get(1)
-        def quizAnswer2 = quizAnswerRepository.findAll().get(2)
+        def courseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
+        courseExecutionRepository.save(courseExecution)
+        def quizStats = new QuizStats(courseExecution)
+        quizStatsRepository.save(quizStats)
+        def quiz = new Quiz()
+        quiz.setCourseExecution(courseExecution)
+        courseExecution.addQuiz(quiz)
+        def student1 = new Student()
+        studentRepository.save(student1)
+        def quizAnswer1 = new QuizAnswer(student1, quiz)
+        quizAnswer1.setCompleted(true)
+        quiz.addQuizAnswer(quizAnswer1)
+        def student2 = new Student()
+        studentRepository.save(student2)
+        def quizAnswer2 = new QuizAnswer(student2, quiz)
+        quizAnswer2.setCompleted(true)
+        quiz.addQuizAnswer(quizAnswer2)
+        quizRepository.save(quiz)
+        quizAnswerRepository.save(quizAnswer1)
+        quizAnswerRepository.save(quizAnswer2)
 
         when:
         quizStats.update()
 
         then:
-        quizStats.getCourseExecution() == quiz.getCourseExecution()
-        quizStats.getNumQuizzes() == 1
-        quiz.getQuizAnswers().contains(quizAnswer1)
-        quiz.getQuizAnswers().contains(quizAnswer2)
-        quizAnswer1.getStudent() != null
-        quizAnswer2.getStudent() != null
-        quiz.getQuizAnswers().size() == 2
-        quizStats.getUniqueQuizzesSolved() == 1
+        def quizStatsT = quizStatsRepository.findAll().get(0)
+        def quizT = quizRepository.findAll().get(0)
+        def quizAnswerT1 = quizAnswerRepository.findAll().get(0)
+        def quizAnswerT2 = quizAnswerRepository.findAll().get(1)
+        quizStatsT.getCourseExecution() == quiz.getCourseExecution()
+        quizStatsT.getNumQuizzes() == 1
+        quizT.getQuizAnswers().contains(quizAnswerT1)
+        quizT.getQuizAnswers().contains(quizAnswerT2)
+        quizAnswerT1.getStudent() != null
+        quizAnswerT2.getStudent() != null
+        quizT.getQuizAnswers().size() == 2
+        quizStatsT.getUniqueQuizzesSolved() == 1
     }
 
     @TestConfiguration
