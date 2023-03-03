@@ -78,6 +78,15 @@ public class TeacherDashboard implements DomainEntity {
     public void accept(Visitor visitor) {
         // Only used for XML generation
     }
+    public void addQuestionStats(QuestionStats questionStat) {
+        this.question.add(questionStat);
+    }
+
+    public void update() {
+        this.question.forEach(QuestionStats::update);
+    }
+
+    public List<QuestionStats> getQuestion() {return this.question;}
 
     @Override
     public String toString() {
