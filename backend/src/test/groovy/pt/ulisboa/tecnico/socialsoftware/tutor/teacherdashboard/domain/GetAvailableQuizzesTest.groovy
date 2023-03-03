@@ -19,53 +19,49 @@ class GetAvailableQuizzesTest extends SpockTest {
     def setup() {
         externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(externalCourse)
-
-        // Test case (1): 3 available quizzes on a QuizStats
-        def courseExecutionA = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
-        courseExecutionRepository.save(courseExecutionA)
-        def quizStatsA = new QuizStats(courseExecutionA)
-        quizStatsRepository.save(quizStatsA)
-        def quiz1 = new Quiz()
-        quiz1.setCourseExecution(courseExecutionA)
-        quizRepository.save(quiz1)
-        def quiz2 = new Quiz()
-        quiz2.setCourseExecution(courseExecutionA)
-        quizRepository.save(quiz2)
-        def quiz3 = new Quiz()
-        quiz3.setCourseExecution(courseExecutionA)
-        quizRepository.save(quiz3)
-
-        // Test case (2): 0 available quizzes on a QuizStats
-        def courseExecutionB = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
-        courseExecutionRepository.save(courseExecutionB)
-        def quizStatsB = new QuizStats(courseExecutionB)
-        quizStatsRepository.save(quizStatsB)
     }
 
     // Test case (1): 3 available quizzes on a QuizStats
-    def "getNumQuizzesWhen3Available"() {
+    def "test 3 available quizzes quizstats"() {
         given:
-        def quizStats = quizStatsRepository.findAll().get(0)
-        def quiz = quizRepository.findAll().get(0)
+        def courseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
+        courseExecutionRepository.save(courseExecution)
+        def quizStats = new QuizStats(courseExecution)
+        quizStatsRepository.save(quizStats)
+        def quiz1 = new Quiz()
+        quiz1.setCourseExecution(courseExecution)
+        quizRepository.save(quiz1)
+        def quiz2 = new Quiz()
+        quiz2.setCourseExecution(courseExecution)
+        quizRepository.save(quiz2)
+        def quiz3 = new Quiz()
+        quiz3.setCourseExecution(courseExecution)
+        quizRepository.save(quiz3)
 
         when:
         quizStats.update()
 
         then:
-        quizStats.getNumQuizzes() == 3
-        quizStats.getCourseExecution() == quiz.getCourseExecution()
+        def quizStatsT = quizStatsRepository.findAll().get(0)
+        def quizT = quizRepository.findAll().get(0)
+        quizStatsT.getNumQuizzes() == 3
+        quizStatsT.getCourseExecution() == quizT.getCourseExecution()
     }
 
     // Test case (2): 0 available quizzes on a QuizStats
-    def "getNumQuizzesWhen0Available"() {
+    def "test 0 available quizzes quizstats"() {
         given:
-        def quizStats = quizStatsRepository.findAll().get(1)
+        def courseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
+        courseExecutionRepository.save(courseExecution)
+        def quizStats = new QuizStats(courseExecution)
+        quizStatsRepository.save(quizStats)
 
         when:
         quizStats.update()
 
         then:
-        quizStats.getNumQuizzes() == 0
+        def quizStatsT = quizStatsRepository.findAll().get(0)
+        quizStatsT.getNumQuizzes() == 0
     }
 
     @TestConfiguration

@@ -110,45 +110,57 @@ class GetUniqueQuizzesSolvedTest extends SpockTest {
         quizStatsT.getUniqueQuizzesSolved() == 1
     }
 
-    // Test case (4): 1 course executions, 1 quizzes, 2 students
-    def "test 1 executions 1 quizzes 2 students"() {
+    // Test case (4): 1 course executions, 2 quizzes, 2 students
+    def "test 1 executions 2 quizzes 2 students"() {
         given:
         def courseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
         courseExecutionRepository.save(courseExecution)
         def quizStats = new QuizStats(courseExecution)
         quizStatsRepository.save(quizStats)
-        def quiz = new Quiz()
-        quiz.setCourseExecution(courseExecution)
-        courseExecution.addQuiz(quiz)
+        def quiz1 = new Quiz()
+        quiz1.setCourseExecution(courseExecution)
+        courseExecution.addQuiz(quiz1)
+        def quiz2 = new Quiz()
+        quiz2.setCourseExecution(courseExecution)
+        courseExecution.addQuiz(quiz2)
         def student1 = new Student()
         studentRepository.save(student1)
-        def quizAnswer1 = new QuizAnswer(student1, quiz)
+        def quizAnswer1 = new QuizAnswer(student1, quiz1)
         quizAnswer1.setCompleted(true)
-        quiz.addQuizAnswer(quizAnswer1)
+        quiz1.addQuizAnswer(quizAnswer1)
         def student2 = new Student()
         studentRepository.save(student2)
-        def quizAnswer2 = new QuizAnswer(student2, quiz)
+        def quizAnswer2 = new QuizAnswer(student2, quiz1)
         quizAnswer2.setCompleted(true)
-        quiz.addQuizAnswer(quizAnswer2)
-        quizRepository.save(quiz)
+        def quizAnswer3 = new QuizAnswer(student2, quiz2)
+        quizAnswer3.setCompleted(false)
+        quiz1.addQuizAnswer(quizAnswer2)
+        quizRepository.save(quiz1)
+        quizRepository.save(quiz2)
         quizAnswerRepository.save(quizAnswer1)
         quizAnswerRepository.save(quizAnswer2)
+        quizAnswerRepository.save(quizAnswer3)
 
         when:
         quizStats.update()
 
         then:
         def quizStatsT = quizStatsRepository.findAll().get(0)
-        def quizT = quizRepository.findAll().get(0)
+        def quizT1 = quizRepository.findAll().get(0)
+        def quizT2 = quizRepository.findAll().get(1)
         def quizAnswerT1 = quizAnswerRepository.findAll().get(0)
         def quizAnswerT2 = quizAnswerRepository.findAll().get(1)
-        quizStatsT.getCourseExecution() == quiz.getCourseExecution()
-        quizStatsT.getNumQuizzes() == 1
-        quizT.getQuizAnswers().contains(quizAnswerT1)
-        quizT.getQuizAnswers().contains(quizAnswerT2)
+        def quizAnswerT3 = quizAnswerRepository.findAll().get(2)
+        quizStatsT.getCourseExecution() == quizT1.getCourseExecution()
+        quizStatsT.getNumQuizzes() == 2
+        quizT1.getQuizAnswers().contains(quizAnswerT1)
+        quizT1.getQuizAnswers().contains(quizAnswerT2)
+        quizT2.getQuizAnswers().contains(quizAnswerT3)
         quizAnswerT1.getStudent() != null
         quizAnswerT2.getStudent() != null
-        quizT.getQuizAnswers().size() == 2
+        quizAnswerT3.getStudent() != null
+        quizT1.getQuizAnswers().size() == 2
+        quizT2.getQuizAnswers().size() == 1
         quizStatsT.getUniqueQuizzesSolved() == 1
     }
 
