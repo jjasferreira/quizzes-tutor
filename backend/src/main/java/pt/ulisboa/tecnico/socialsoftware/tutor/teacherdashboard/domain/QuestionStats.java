@@ -12,7 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 
 @Entity
@@ -87,22 +86,26 @@ public class QuestionStats implements DomainEntity {
     }
 
     private float getAverageAnsweredQuestions() {
-        Set<Student> countedStudents = new HashSet<>();
-        int answerCounter = 0;
+        int sum = 0;
 
-        for(Quiz quiz : this.execution.getQuizzes()) {
-            for (QuizQuestion question : quiz.getQuizQuestions()) {
-                for(QuestionAnswer answer : question.getQuestionAnswers()){
-                    if(!countedStudents.contains(answer.getQuizAnswer().getStudent())){
-                        answerCounter++;
-                        countedStudents.add(answer.getQuizAnswer().getStudent());
+        // por cada student da execution
+        for(Student student : this.execution.getStudents()){
+            // por cada quiz da execution
+            for(Quiz quiz : this.execution.getQuizzes()){
+                // verifica se o student fez o quiz
+                if(student.getQuizAnswer(quiz) != null){
+                    // vai buscar cada resposta do student a esse quiz
+                    for(QuestionAnswer questionAnswer : student.getQuizAnswer(quiz).getQuestionAnswers()){
+                        // vai buscar a pergunta que lhe foi feita, e ve se ja nao foi feita anteriormente
+                        // acrescenta uma pergunta nao repetida
+                        sum++;
                     }
                 }
-                countedStudents.clear();
             }
+            // acrescenta numero de perguntas unicas de cada estudante
         }
-
-        return (float) answerCounter/this.execution.getStudents().size();
+        if(this.execution.getStudents().size() == 0) return 0;
+        return (float)sum/this.execution.getStudents().size();
     }
 
     public void accept(Visitor visitor) {
