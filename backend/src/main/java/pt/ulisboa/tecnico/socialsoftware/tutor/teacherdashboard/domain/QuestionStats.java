@@ -12,9 +12,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 
 @Entity
 public class QuestionStats implements DomainEntity {
+
+    public QuestionStats() {}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,6 +56,7 @@ public class QuestionStats implements DomainEntity {
     public void update() {
         this.numAvailable = getNumAvailableQuestions();
         this.answeredQuestionUnique = getNumUniqueQuestionsAnswered();
+        this.averageQuestionsAnswered = getAverageAnsweredQuestions();
     }
 
     private int getNumAvailableQuestions() {
@@ -79,6 +84,25 @@ public class QuestionStats implements DomainEntity {
             }
 
         return uniqueQuestionsAnswered.size();
+    }
+
+    private float getAverageAnsweredQuestions() {
+        Set<Student> countedStudents = new HashSet<>();
+        int answerCounter = 0;
+
+        for(Quiz quiz : this.execution.getQuizzes()) {
+            for (QuizQuestion question : quiz.getQuizQuestions()) {
+                for(QuestionAnswer answer : question.getQuestionAnswers()){
+                    if(!countedStudents.contains(answer.getQuizAnswer().getStudent())){
+                        answerCounter++;
+                        countedStudents.add(answer.getQuizAnswer().getStudent());
+                    }
+                }
+                countedStudents.clear();
+            }
+        }
+
+        return (float) answerCounter/this.execution.getStudents().size();
     }
 
     public void accept(Visitor visitor) {
