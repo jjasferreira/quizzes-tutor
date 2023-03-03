@@ -41,17 +41,20 @@ class GetUniqueQuizzesSolvedTest extends SpockTest {
         def teacher = new Teacher()
         teacherRepository.save(teacher)
         def teacherDashboard = new TeacherDashboard(courseExecution, teacher)
-        teacherDashboardRepository.save(teacherDashboard)
         def quizStats = new QuizStats(courseExecution, teacherDashboard)
         quizStatsRepository.save(quizStats)
+        teacherDashboard.addQuizStats(quizStats)
+        teacherDashboardRepository.save(teacherDashboard)
 
         when:
         quizStats.update()
 
         then:
         def quizStatsT = quizStatsRepository.findAll().get(0)
+        def teacherDashboardT = teacherDashboardRepository.findAll().get(0)
         quizStatsT.getCourseExecution() != null
         quizStatsT.getTeacherDashboard() != null
+        teacherDashboardT.getQuizStats().contains(quizStatsT)
         quizStatsT.getNumQuizzes() == 0
     }
 
