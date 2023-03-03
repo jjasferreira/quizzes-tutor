@@ -100,8 +100,10 @@ public class StudentStats implements DomainEntity {
         long correctAnswers = 0;
         for (Student student: getStudents()){
             for (QuizAnswer answer: student.getQuizAnswers()){
-                questionsAnswered += answer.getNumberOfAnsweredQuestions();
-                correctAnswers += answer.getNumberOfCorrectAnswers();
+                if (answer.isCompleted()){
+                    questionsAnswered += answer.getNumberOfAnsweredQuestions();
+                    correctAnswers += answer.getNumberOfCorrectAnswers();
+                }
             }
             if (correctAnswers > 0.75 * questionsAnswered){
                 studentsCount++;
