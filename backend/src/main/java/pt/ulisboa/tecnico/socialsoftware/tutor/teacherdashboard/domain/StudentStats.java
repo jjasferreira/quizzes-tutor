@@ -5,12 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-
 
 @Entity
 public class StudentStats implements DomainEntity {
@@ -30,32 +25,39 @@ public class StudentStats implements DomainEntity {
 
     private int numAtLeast3Quizzes;
 
-    public StudentStats() {
-    }
+    public StudentStats() {}
 
-    public StudentStats(CourseExecution courseExecution) {
+    public StudentStats(CourseExecution courseExecution, TeacherDashboard teacherDashboard) {
         setCourseExecution(courseExecution);
+        setTeacherDashboard(teacherDashboard);
     }
 
     public Integer getId() {
         return id;
     }
 
-    public int getNumStudents() {return numStudents;}
-
-    public void setNumStudents(int numStudents) {this.numStudents = numStudents;
+    public int getNumStudents() {
+        return numStudents;
     }
 
-    public int getNumMore75CorrectQuestions() {return numMore75CorrectQuestions;
+    public void setNumStudents(int numStudents) {
+        this.numStudents = numStudents;
     }
 
-    public void setNumMore75CorrectQuestions(int numMore75CorrectQuestions) {this.numMore75CorrectQuestions = numMore75CorrectQuestions;
+    public int getNumMore75CorrectQuestions() {
+        return numMore75CorrectQuestions;
     }
 
-    public int getNumAtLeast3Quizzes() {return numAtLeast3Quizzes;
+    public void setNumMore75CorrectQuestions(int numMore75CorrectQuestions) {
+        this.numMore75CorrectQuestions = numMore75CorrectQuestions;
     }
 
-    public void setNumAtLeast3Quizzes(int numAtLeast3Quizzes) {this.numAtLeast3Quizzes = numAtLeast3Quizzes;
+    public int getNumAtLeast3Quizzes() {
+        return numAtLeast3Quizzes;
+    }
+
+    public void setNumAtLeast3Quizzes(int numAtLeast3Quizzes) {
+        this.numAtLeast3Quizzes = numAtLeast3Quizzes;
     }
 
     public CourseExecution getCourseExecution() {
@@ -72,55 +74,45 @@ public class StudentStats implements DomainEntity {
 
     public void setTeacherDashboard(TeacherDashboard teacherDashboard) {
         this.teacherDashboard = teacherDashboard;
+        teacherDashboard.addStudentStats(this);
     }
 
-    public int getTotalStudentNumber(){
-        int studentCount = 0;
-        for (User user: getCourseExecution().getUsers()){
-            if (user.getRole() == User.Role.STUDENT){
-                studentCount++;
-            }
-        }
-        return studentCount;
+    private int calculateTotalStudentNumber() {
+        return this.courseExecution.getStudents().size();
     }
 
-    public Set<Student> getStudents(){
-        Set<Student> students = new HashSet<>();
-        for (User user: getCourseExecution().getUsers()){
-            if(user.isStudent()){
-                students.add((Student)user);
-            }
-        }
-        return  students;
-    }
-
-    public int getStudentsOver75Correct(){
+    private int calculateStudentsOver75Correct() {
         int studentsCount = 0;
-        long questionsAnswered = 0;
+        long totalQuestions = 0;
         long correctAnswers = 0;
-        for (Student student: getStudents()){
-            for (QuizAnswer answer: student.getQuizAnswers()){
-                if (answer.isCompleted()){
-                    questionsAnswered += answer.getNumberOfAnsweredQuestions();
+        for (Student student : this.courseExecution.getStudents()) {
+            for (QuizAnswer answer : student.getQuizAnswers()) {
+                if (answer.isCompleted()
+                        && answer.getQuiz().getCourseExecution().equals(this.courseExecution)) {
+                    totalQuestions += answer.getQuiz().getQuizQuestionsNumber();
                     correctAnswers += answer.getNumberOfCorrectAnswers();
                 }
             }
-            if (correctAnswers > 0.75 * questionsAnswered){
+
+            if (correctAnswers > 0.75 * totalQuestions) {
                 studentsCount++;
             }
         }
+
         return studentsCount;
     }
 
-    public int calculateNumAtLeast3Quizzes(){
+    private int calculateNumAtLeast3Quizzes() {
         int studentsCount = 0;
-        for (Student student: getStudents()){
+        for (Student student : this.courseExecution.getStudents()) {
             int completedQuizzes = 0;
-            for (QuizAnswer answer: student.getQuizAnswers()){
-                if (answer.isCompleted()){
+            for (QuizAnswer answer : student.getQuizAnswers()) {
+                if (answer.isCompleted()
+                        && answer.getQuiz().getCourseExecution().equals(this.courseExecution)) {
                     completedQuizzes++;
                 }
-                if (completedQuizzes >= 3){
+
+                if (completedQuizzes >= 3) {
                     studentsCount++;
                     break;
                 }
@@ -129,22 +121,28 @@ public class StudentStats implements DomainEntity {
         return studentsCount;
     }
 
-    public void update(){
-        setNumStudents(getTotalStudentNumber());
-        setNumMore75CorrectQuestions(getStudentsOver75Correct());
+    public void update() {
+        setNumStudents(calculateTotalStudentNumber());
+        setNumMore75CorrectQuestions(calculateStudentsOver75Correct());
         setNumAtLeast3Quizzes(calculateNumAtLeast3Quizzes());
     }
 
     @Override
     public String toString() {
-        return "StudentStats{" +
-                "id=" + id +
-                ", courseExecution=" + courseExecution +
-                ", teacherDashboard=" + teacherDashboard +
-                ", numStudents=" + numStudents +
-                ", numMore75CorrectQuestions=" + numMore75CorrectQuestions +
-                ", getNumAtLeast3Quizzes=" + numAtLeast3Quizzes +
-                '}';
+        return "StudentStats{"
+                + "id="
+                + id
+                + ", courseExecution="
+                + courseExecution
+                + ", teacherDashboard="
+                + teacherDashboard
+                + ", numStudents="
+                + numStudents
+                + ", numMore75CorrectQuestions="
+                + numMore75CorrectQuestions
+                + ", getNumAtLeast3Quizzes="
+                + numAtLeast3Quizzes
+                + '}';
     }
 
     @Override
