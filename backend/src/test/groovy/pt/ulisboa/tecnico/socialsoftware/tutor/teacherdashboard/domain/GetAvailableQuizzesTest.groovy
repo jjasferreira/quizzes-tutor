@@ -8,13 +8,18 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.QuizStatsRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.TeacherRepository
 
 @DataJpaTest
 class GetAvailableQuizzesTest extends SpockTest {
     @Autowired
     QuizStatsRepository quizStatsRepository
+    @Autowired
+    TeacherRepository teacherRepository
 
     def setup() {
         externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
@@ -26,7 +31,10 @@ class GetAvailableQuizzesTest extends SpockTest {
         given:
         def courseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
         courseExecutionRepository.save(courseExecution)
-        def quizStats = new QuizStats(courseExecution)
+        def teacher = new Teacher()
+        teacherRepository.save(teacher)
+        def teacherDashboard = new TeacherDashboard(courseExecution, teacher)
+        def quizStats = new QuizStats(courseExecution, teacherDashboard)
         quizStatsRepository.save(quizStats)
         def quiz1 = new Quiz()
         quiz1.setCourseExecution(courseExecution)
@@ -53,7 +61,10 @@ class GetAvailableQuizzesTest extends SpockTest {
         given:
         def courseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
         courseExecutionRepository.save(courseExecution)
-        def quizStats = new QuizStats(courseExecution)
+        def teacher = new Teacher()
+        teacherRepository.save(teacher)
+        def teacherDashboard = new TeacherDashboard(courseExecution, teacher)
+        def quizStats = new QuizStats(courseExecution, teacherDashboard)
         quizStatsRepository.save(quizStats)
 
         when:

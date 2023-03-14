@@ -5,15 +5,17 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.QuizStatsRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.StudentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.TeacherRepository
 
 import static org.junit.Assert.assertEquals
 
@@ -23,6 +25,8 @@ class GetAverageQuizzesSolvedTest extends SpockTest {
     QuizStatsRepository quizStatsRepository
     @Autowired
     StudentRepository studentRepository
+    @Autowired
+    TeacherRepository teacherRepository
 
     def setup() {
         externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
@@ -33,7 +37,10 @@ class GetAverageQuizzesSolvedTest extends SpockTest {
         given:
         def courseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
         courseExecutionRepository.save(courseExecution)
-        def quizStats = new QuizStats(courseExecution)
+        def teacher = new Teacher("João", "joao", "joao@ist.utl.pt", true, AuthUser.Type.TECNICO)
+        teacherRepository.save(teacher)
+        def teacherDashboard = new TeacherDashboard(courseExecution, teacher)
+        def quizStats = new QuizStats(courseExecution, teacherDashboard)
         quizStatsRepository.save(quizStats)
 
         when:
@@ -54,7 +61,10 @@ class GetAverageQuizzesSolvedTest extends SpockTest {
         studentRepository.save(student)
         courseExecution.addUser(student)
         courseExecutionRepository.save(courseExecution)
-        def quizStats = new QuizStats(courseExecution)
+        def teacher = new Teacher()
+        teacherRepository.save(teacher)
+        def teacherDashboard = new TeacherDashboard(courseExecution, teacher)
+        def quizStats = new QuizStats(courseExecution, teacherDashboard)
         quizStatsRepository.save(quizStats)
 
         when:
@@ -73,11 +83,14 @@ class GetAverageQuizzesSolvedTest extends SpockTest {
         def student1 = new Student("José João Ferreira", true)
         studentRepository.save(student1)
         courseExecution.addUser(student1)
-        def student2 = new Student("José João Ferreira", true)
+        def student2 = new Student("João Cardoso", true)
         studentRepository.save(student2)
         courseExecution.addUser(student2)
         courseExecutionRepository.save(courseExecution)
-        def quizStats = new QuizStats(courseExecution)
+        def teacher = new Teacher()
+        teacherRepository.save(teacher)
+        def teacherDashboard = new TeacherDashboard(courseExecution, teacher)
+        def quizStats = new QuizStats(courseExecution, teacherDashboard)
         quizStatsRepository.save(quizStats)
         def quiz1 = new Quiz()
         quiz1.setCourseExecution(courseExecution)
