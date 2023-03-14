@@ -35,13 +35,15 @@ public class QuizStats implements DomainEntity {
     public QuizStats() {
     }
 
-    public QuizStats(CourseExecution courseExecution) {
-        setCourseExecution(courseExecution);
-    }
-
     public QuizStats(CourseExecution courseExecution, TeacherDashboard teacherDashboard) {
         setCourseExecution(courseExecution);
         setTeacherDashboard(teacherDashboard);
+    }
+
+    public void remove() {
+        teacherDashboard.getQuizStats().remove(this);
+        courseExecution = null;
+        teacherDashboard = null;
     }
 
     public Integer getId() {
@@ -62,6 +64,7 @@ public class QuizStats implements DomainEntity {
 
     public void setTeacherDashboard(TeacherDashboard teacherDashboard) {
         this.teacherDashboard = teacherDashboard;
+        this.teacherDashboard.addQuizStats(this);
     }
 
     public int getNumQuizzes() {
@@ -88,7 +91,7 @@ public class QuizStats implements DomainEntity {
         this.averageQuizzesSolved = averageQuizzesSolved;
     }
 
-    public int getNumQuizzesExecution() {
+    private int getNumQuizzesExecution() {
         int quizCount = 0;
         for (Quiz quiz: getCourseExecution().getQuizzes()) {
             quizCount++;
@@ -96,7 +99,7 @@ public class QuizStats implements DomainEntity {
         return quizCount;
     }
 
-    public int getUniqueQuizzesSolvedExecution() {
+    private int getUniqueQuizzesSolvedExecution() {
         int quizCount = 0;
         for (Quiz quiz: getCourseExecution().getQuizzes()) {
             for (QuizAnswer quizAnswer: quiz.getQuizAnswers()) {
@@ -109,13 +112,14 @@ public class QuizStats implements DomainEntity {
         return quizCount;
     }
 
-    public float getAverageQuizzesSolvedExecution() {
+    private float getAverageQuizzesSolvedExecution() {
         int quizCount = 0;
         int studentCount = 0;
-        for (Student student: getCourseExecution().getStudents()) {
+        CourseExecution execution = getCourseExecution();
+        for (Student student: execution.getStudents()) {
             studentCount++;
             for (QuizAnswer quizAnswer: student.getQuizAnswers()) {
-                if (quizAnswer.isCompleted()) {
+                if (quizAnswer.getQuiz().getCourseExecution() == execution && quizAnswer.isCompleted()) {
                     quizCount++;
                 }
             }
