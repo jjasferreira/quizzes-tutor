@@ -11,15 +11,14 @@ import java.util.List;
 public class TeacherDashboardDto {
     private Integer id;
     private Integer numberOfStudents;
+
     private List<QuestionStatsDto> questionStats;
 
     private ArrayList<StudentStatsDto> studentStatsDtos;
-
-    public TeacherDashboardDto() {
-        this.questionStats = new ArrayList<>();
     private List<QuizStatsDto> quizStats;
 
     public TeacherDashboardDto() {
+        this.questionStats = new ArrayList<>();
         this.quizStats = new ArrayList<>();
     }
 
