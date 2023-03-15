@@ -40,11 +40,20 @@ public class TeacherDashboardDto {
         this.numberOfStudents = numberOfStudents;
     }
 
+    public List<QuizStatsDto> getQuizStats() {
+        return quizStats;
+    }
+
+    public void addQuizStats(QuizStatsDto quizStats) {
+        this.quizStats.add(quizStats);
+    }
+
     @Override
     public String toString() {
         return "TeacherDashboardDto{" +
                 "id=" + id +
                 ", numberOfStudents=" + this.getNumberOfStudents() +
+                ", quizStats=" + this.getQuizStats() +
                 "}";
     }
 }
