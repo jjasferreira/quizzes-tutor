@@ -11,6 +11,7 @@ import java.util.List;
 public class TeacherDashboardDto {
     private Integer id;
     private Integer numberOfStudents;
+    private List<QuizStatsDto> quizStats;
 
     private List<QuestionStatsDto> questionStats;
 
