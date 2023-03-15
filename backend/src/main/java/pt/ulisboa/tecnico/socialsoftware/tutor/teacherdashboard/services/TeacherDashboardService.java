@@ -5,15 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain.TeacherDashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.dto.TeacherDashboardDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.TeacherDashboardRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.TeacherRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain.QuizStats;
+import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.dto.QuizStatsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.QuizStatsRepository;
 
 import java.util.*;
 
@@ -31,6 +34,9 @@ public class TeacherDashboardService {
     @Autowired
     private TeacherDashboardRepository teacherDashboardRepository;
 
+    @Autowired
+    private QuizStatsRepository quizStatsRepository;
+
     private CourseExecution[] getLastTwoCourseExecutions(CourseExecution courseExecution){
         CourseExecution[] courseExecutions = courseExecution.getCourse().getCourseExecutions().stream()
                 .filter(x -> x.getEndDate().isBefore(courseExecution.getEndDate()))
@@ -40,7 +46,7 @@ public class TeacherDashboardService {
         if (courseExecutions.length > 2){
             courseExecutions = Arrays.copyOfRange(courseExecutions, 0, 2);
         }
-        return  courseExecutions;
+        return courseExecutions;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -69,7 +75,6 @@ public class TeacherDashboardService {
         Teacher teacher = teacherRepository.findById(teacherId)
                 .orElseThrow(() -> new TutorException(USER_NOT_FOUND, teacherId));
 
-
         if (teacher.getDashboards().stream().anyMatch(dashboard -> dashboard.getCourseExecution().equals(courseExecution)))
             throw new TutorException(TEACHER_ALREADY_HAS_DASHBOARD);
 
@@ -81,8 +86,18 @@ public class TeacherDashboardService {
 
     private TeacherDashboardDto createAndReturnTeacherDashboardDto(CourseExecution courseExecution, Teacher teacher) {
         TeacherDashboard teacherDashboard = new TeacherDashboard(courseExecution, teacher);
-        teacherDashboardRepository.save(teacherDashboard);
+        CourseExecution[] courseExecutions = getLastTwoCourseExecutions(courseExecution);
 
+        // Create a QuizStats object for the last three course executions (if they exist) and add to the dashboard
+        QuizStats quizStats = new QuizStats(courseExecution, teacherDashboard);
+        teacherDashboard.addQuizStats(quizStats);
+        quizStatsRepository.save(quizStats);
+        for (CourseExecution ce : courseExecutions) {
+            QuizStats quizStats = new QuizStats(ce, teacherDashboard);
+            teacherDashboard.addQuizStats(quizStats);
+            quizStatsRepository.save(quizStats);
+        }
+        teacherDashboardRepository.save(teacherDashboard);
         return new TeacherDashboardDto(teacherDashboard);
     }
 
