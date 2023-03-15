@@ -69,6 +69,12 @@ public class TeacherDashboardDto {
 
     public void addQuestionStats(QuestionStatsDto questionStats) {
         this.questionStats.add(questionStats);
+    public List<QuizStatsDto> getQuizStats() {
+        return quizStats;
+    }
+
+    public void addQuizStats(QuizStatsDto quizStats) {
+        this.quizStats.add(quizStats);
     }
 
     @Override
@@ -77,6 +83,7 @@ public class TeacherDashboardDto {
                 "id=" + id +
                 ", numberOfStudents=" + this.getNumberOfStudents() +
                 ", questionStats=" + this.getQuestionStats() +
+                ", quizStats=" + this.getQuizStats() +
                 "}";
     }
 }
