@@ -2,13 +2,14 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.dto;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain.TeacherDashboard;
 
 public class TeacherDashboardDto {
     private Integer id;
     private Integer numberOfStudents;
     private List<QuestionStatsDto> questionStats;
+
+    private ArrayList<StudentStatsDto> studentStatsDtos;
 
     public TeacherDashboardDto() {
         this.questionStats = new ArrayList<>();
@@ -18,6 +19,11 @@ public class TeacherDashboardDto {
         this.id = teacherDashboard.getId();
         // For the number of students, we consider only active students
         this.numberOfStudents = teacherDashboard.getCourseExecution().getNumberOfActiveStudents();
+        this.studentStatsDtos = new ArrayList<>();
+        teacherDashboard
+                .getStudentStats()
+                .forEach(
+                        studentStats -> this.addStudentStatsDto(new StudentStatsDto(studentStats)));
         this.questionStats = new ArrayList<>();
         teacherDashboard.getQuestion().forEach(questionStats -> this.questionStats.add(new QuestionStatsDto(questionStats)));
     }
@@ -36,6 +42,14 @@ public class TeacherDashboardDto {
 
     public void setNumberOfStudents(Integer numberOfStudents) {
         this.numberOfStudents = numberOfStudents;
+    }
+
+    public ArrayList<StudentStatsDto> getStudentStatsDtos() {
+        return studentStatsDtos;
+    }
+
+    public void addStudentStatsDto(StudentStatsDto studentStatsDto) {
+        this.studentStatsDtos.add(studentStatsDto);
     }
 
     public List<QuestionStatsDto> getQuestionStats() {
