@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 public class TeacherDashboard implements DomainEntity {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "teacherDashboard", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dashboard", orphanRemoval = true)
     private List<QuestionStats> question = new ArrayList<>();
 
     @Id
@@ -69,6 +69,10 @@ public class TeacherDashboard implements DomainEntity {
 
     public Set<StudentStats> getStudentStats() {
         return studentStats;
+    }
+
+    public List<QuestionStats> getQuestionStats(){
+        return this.question;
     }
 
     public void addStudentStats(StudentStats studentStats) {

@@ -1,115 +1,122 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain;
 
-import java.util.HashSet;
-import java.util.Set;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.Status;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
-
 @Entity
 public class QuestionStats implements DomainEntity {
-
-    public QuestionStats() {}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private int numAvailable;
-
-    private int answeredQuestionUnique;
-
-    private float averageQuestionsAnswered;
-
     @OneToOne
     private CourseExecution execution;
 
     @ManyToOne
-    private TeacherDashboard teacherDashboard;
+    private TeacherDashboard dashboard;
 
-    public QuestionStats(CourseExecution courseExecution){
-        this.execution = courseExecution;
+    private Integer numAvailable, answeredQuestionsUnique;
+    private Float averageQuestionsAnswered;
+
+    public QuestionStats () {}
+
+    public QuestionStats (TeacherDashboard dashboard, CourseExecution execution) {
+        setDashboard(dashboard);
+        setCourseExecution(execution);
+        numAvailable = 0;
+        answeredQuestionsUnique = 0;
+        averageQuestionsAnswered = 0.0f;        
     }
 
-    public int getNumAvailable() {
-        return numAvailable;
+    public void setDashboard (TeacherDashboard dashboard) {
+        this.dashboard = dashboard;
+        dashboard.addQuestionStats(this);
     }
 
-    public int getAnsweredQuestionUnique() {
-        return answeredQuestionUnique;
+    public void setCourseExecution (CourseExecution execution) {
+        this.execution = execution;
     }
 
-    public float getAverageQuestionsAnswered() {
-        return averageQuestionsAnswered;
+    public CourseExecution getCourseExecution () {
+        return this.execution;
     }
 
+    public TeacherDashboard getTeacherDashboard () {
+        return this.dashboard;
+    }
+
+    public Integer getId() {
+        return this.id;
+    }
+
+    public void remove () {
+        execution = null;
+        dashboard.getQuestionStats().remove(this);
+        dashboard = null;
+    }
+
+    public Integer getNumAvailable() {
+        return this.numAvailable;
+    }
+
+    public Integer getAnsweredQuestionsUnique() {
+        return this.answeredQuestionsUnique;
+    }
+
+    public Float getAverageQuestionsAnswered() {
+        return this.averageQuestionsAnswered;
+    }
 
     public void update() {
-        this.numAvailable = getNumAvailableQuestions();
-        this.answeredQuestionUnique = getNumUniqueQuestionsAnswered();
-        this.averageQuestionsAnswered = getAverageAnsweredQuestions();
+        // number of available questions
+        this.numAvailable = (int) execution.getQuizzes().stream()
+            .flatMap(q -> q.getQuizQuestions().stream())
+            .map(QuizQuestion::getQuestion)
+            .filter(q -> q.getStatus() == Status.AVAILABLE)
+            .distinct()
+            .count();
+        
+        // number of answered questions at least once
+        this.answeredQuestionsUnique = (int) execution.getQuizzes().stream()
+                .flatMap(q -> q.getQuizAnswers() .stream()
+                    .flatMap(qa -> qa.getQuestionAnswers().stream()
+                        .map(QuestionAnswer::getQuestion)))
+            .distinct()
+            .count();
+
+        // number of students 
+        int students = execution.getStudents().size();
+
+        long uniqueAllStudents = execution.getStudents().stream().mapToLong(student -> 
+            student.getQuizAnswers().stream().flatMap(
+                qa -> qa.getQuestionAnswers().stream().map(QuestionAnswer::getQuestion)
+            ).distinct().count()).sum();
+
+        // average
+        this.averageQuestionsAnswered = students > 0 ? (float) uniqueAllStudents / students : 0.0f;
     }
 
-    private int getNumAvailableQuestions() {
-        int questionCounter = 0;
-        for(Question question : this.execution.getCourse().getQuestions()){
-            if(question.getStatus() == Question.Status.AVAILABLE){
-                questionCounter++;
-            }
-        }
-        return questionCounter;
-    }
-
-    private int getNumUniqueQuestionsAnswered() {
-        Set<Question> uniqueQuestionsAnswered = new HashSet<>();
-
-        for(Quiz quiz : this.execution.getQuizzes()) {
-            for (QuizAnswer quizAnswer : quiz.getQuizAnswers()) {
-                if (quizAnswer.getStudent() != null) {
-                    for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers())
-                        if (!uniqueQuestionsAnswered.contains(questionAnswer.getQuestion())) {
-                            uniqueQuestionsAnswered.add(questionAnswer.getQuestion());
-                        }
-                    }
-                }
-            }
-
-        return uniqueQuestionsAnswered.size();
-    }
-
-    private float getAverageAnsweredQuestions() {
-        int sum = 0;
-
-        // por cada student da execution
-        for(Student student : this.execution.getStudents()){
-            // por cada quiz da execution
-            for(Quiz quiz : this.execution.getQuizzes()){
-                // verifica se o student fez o quiz
-                if(student.getQuizAnswer(quiz) != null){
-                    // vai buscar cada resposta do student a esse quiz
-                    for(QuestionAnswer questionAnswer : student.getQuizAnswer(quiz).getQuestionAnswers()){
-                        // vai buscar a pergunta que lhe foi feita, e ve se ja nao foi feita anteriormente
-                        // acrescenta uma pergunta nao repetida
-                        sum++;
-                    }
-                }
-            }
-            // acrescenta numero de perguntas unicas de cada estudante
-        }
-        if(this.execution.getStudents().size() == 0) return 0;
-        return (float)sum/this.execution.getStudents().size();
-    }
-
+    @Override
     public void accept(Visitor visitor) {
-        // Only to generate XML
+        
     }
 
+    @Override
+    public String toString() {
+        return "QuestionStats{" +
+            "id=" + id +
+            ", teacherDashboard=" + dashboard.getId() +
+            ", courseExecution=" + execution.getId() +
+            ", numAvailable=" + numAvailable +
+            ", answeredQuestionsUnique=" + answeredQuestionsUnique +
+            ", averageQuestionsAnswered=" + averageQuestionsAnswered +
+            '}';
+      }
 }
