@@ -68,6 +68,8 @@ public class TeacherDashboardDto {
 
     public void addQuestionStats(QuestionStatsDto questionStats) {
         this.questionStats.add(questionStats);
+    }
+    
     public List<QuizStatsDto> getQuizStats() {
         return quizStats;
     }
