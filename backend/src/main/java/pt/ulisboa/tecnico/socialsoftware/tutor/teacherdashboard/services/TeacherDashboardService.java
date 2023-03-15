@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.services;
 
+import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -7,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain.TeacherDashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.dto.TeacherDashboardDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.TeacherDashboardRepository;
@@ -28,6 +30,18 @@ public class TeacherDashboardService {
 
     @Autowired
     private TeacherDashboardRepository teacherDashboardRepository;
+
+    private CourseExecution[] getLastTwoCourseExecutions(CourseExecution courseExecution){
+        CourseExecution[] courseExecutions = courseExecution.getCourse().getCourseExecutions().stream()
+                .filter(x -> x.getEndDate().isBefore(courseExecution.getEndDate()))
+                .sorted(Comparator.comparing(CourseExecution::getEndDate).reversed())
+                .toArray(CourseExecution[]::new);
+
+        if (courseExecutions.length > 2){
+            courseExecutions = Arrays.copyOfRange(courseExecutions, 0, 2);
+        }
+        return  courseExecutions;
+    }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public TeacherDashboardDto getTeacherDashboard(int courseExecutionId, int teacherId) {
@@ -54,6 +68,7 @@ public class TeacherDashboardService {
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
         Teacher teacher = teacherRepository.findById(teacherId)
                 .orElseThrow(() -> new TutorException(USER_NOT_FOUND, teacherId));
+
 
         if (teacher.getDashboards().stream().anyMatch(dashboard -> dashboard.getCourseExecution().equals(courseExecution)))
             throw new TutorException(TEACHER_ALREADY_HAS_DASHBOARD);
