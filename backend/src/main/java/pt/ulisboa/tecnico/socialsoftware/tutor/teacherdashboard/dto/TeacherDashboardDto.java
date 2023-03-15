@@ -3,6 +3,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.dto;
 import java.util.ArrayList;
 import java.util.List;
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain.TeacherDashboard;
+import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.dto.QuizStatsDto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TeacherDashboardDto {
     private Integer id;
@@ -13,6 +17,10 @@ public class TeacherDashboardDto {
 
     public TeacherDashboardDto() {
         this.questionStats = new ArrayList<>();
+    private List<QuizStatsDto> quizStats;
+
+    public TeacherDashboardDto() {
+        this.quizStats = new ArrayList<>();
     }
 
     public TeacherDashboardDto(TeacherDashboard teacherDashboard) {
@@ -26,6 +34,9 @@ public class TeacherDashboardDto {
                         studentStats -> this.addStudentStatsDto(new StudentStatsDto(studentStats)));
         this.questionStats = new ArrayList<>();
         teacherDashboard.getQuestion().forEach(questionStats -> this.questionStats.add(new QuestionStatsDto(questionStats)));
+        // Add the DTOs of all quizStats to the list
+        this.quizStats = new ArrayList<>();
+        teacherDashboard.getQuizStats().forEach(quizStats -> this.quizStats.add(new QuizStatsDto(quizStats)));
     }
 
     public Integer getId() {
