@@ -13,6 +13,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.QuizStatsRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.TeacherRepository
 
@@ -57,7 +61,7 @@ class TeacherDashboardQuizStatsTest extends SpockTest {
         td.getQuizStats().get(1).getCourseExecution().getId() == courseExecution2.getId()
     }
 
-    def "create 2 more executions associated with that same course" () {
+    def "create 2 more executions associated with that same course"() {
         given: "two more previous course executions"
         teacher.addCourse(courseExecution)
         courseExecution3 = new CourseExecution(course, COURSE_1_ACRONYM, "2 Semestre 2018/2019", Course.Type.TECNICO, LOCAL_DATE_BEFORE)
