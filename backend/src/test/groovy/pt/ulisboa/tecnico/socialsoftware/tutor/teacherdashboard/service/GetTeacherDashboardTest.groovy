@@ -1,21 +1,45 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.service
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthUserDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.TeacherRepository
 import spock.lang.Unroll
 
 @DataJpaTest
 class GetTeacherDashboardTest extends SpockTest {
+
+    @Autowired
+    TeacherRepository teacherRepository
+
     def authUserDto
+    def course
+    def courseExecution
     def courseExecutionDto
+    def teacher
 
     def setup() {
-        courseExecutionDto = courseService.getDemoCourse()
-        authUserDto = authUserService.demoTeacherAuth().getUser()
+        course = new Course(COURSE_1_NAME, Course.Type.TECNICO)
+        courseRepository.save(course)
+        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
+        courseExecutionRepository.save(courseExecution)
+        courseExecutionDto = courseService.createTecnicoCourseExecution(new CourseExecutionDto(courseExecution))
+        teacher = new Teacher("João", "joao", "joao@ist.utl.pt", true, AuthUser.Type.TECNICO)
+        teacher.addCourse(courseExecution)
+        teacherRepository.save(teacher)
+        authUserDto = new AuthUserDto(teacher.getAuthUser())
+        // courseExecutionDto = courseService.getDemoCourse()
+        // authUserDto = authUserService.demoTeacherAuth().getUser()
     }
 
     def "get a dashboard when dashboard does not exist"() {

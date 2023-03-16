@@ -92,7 +92,7 @@ public class TeacherDashboardService {
         teacherDashboard.addQuizStats(quizStats);
         quizStatsRepository.save(quizStats);
         for (CourseExecution ce : courseExecutions) {
-            QuizStats quizStats = new QuizStats(ce, teacherDashboard);
+            quizStats = new QuizStats(ce, teacherDashboard);
             teacherDashboard.addQuizStats(quizStats);
             quizStatsRepository.save(quizStats);
         }
