@@ -143,9 +143,9 @@ public class TeacherDashboardService {
             for(CourseExecution execution : teacher.getCourseExecutions()){
                 if((teacherDashboard = teacher.getCourseExecutionDashboard(execution)) == null){
                     createTeacherDashboard(execution.getId(), teacher.getId());
-                    teacher.getCourseExecutionDashboard(execution).update();
+                    updateTeacherDashboard(teacher.getCourseExecutionDashboard(execution).getId());
                 } else {
-                    teacherDashboard.update();
+                    updateTeacherDashboard(teacherDashboard.getId());
                 }
             }
         }
