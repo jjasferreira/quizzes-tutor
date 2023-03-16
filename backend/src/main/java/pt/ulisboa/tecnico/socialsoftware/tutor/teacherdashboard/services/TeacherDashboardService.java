@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain.StudentStats;
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain.TeacherDashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.dto.TeacherDashboardDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.StudentStatsRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.TeacherDashboardRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.TeacherRepository;
@@ -35,6 +37,9 @@ public class TeacherDashboardService {
 
     @Autowired
     private QuizStatsRepository quizStatsRepository;
+
+    @Autowired
+    private StudentStatsRepository studentStatsRepository;
 
     private CourseExecution[] getLastTwoCourseExecutions(CourseExecution courseExecution){
         CourseExecution[] courseExecutions = courseExecution.getCourse().getCourseExecutions().stream()
@@ -91,12 +96,22 @@ public class TeacherDashboardService {
         QuizStats quizStats = new QuizStats(courseExecution, teacherDashboard);
         teacherDashboard.addQuizStats(quizStats);
         quizStatsRepository.save(quizStats);
+
+        // Create a StudentStats object for the last three course executions (if they exist) and add to the dashboard
+        StudentStats studentStats = new StudentStats(courseExecution, teacherDashboard);
+        teacherDashboard.addStudentStats(studentStats);
+        studentStatsRepository.save(studentStats);
+
         for (CourseExecution ce : courseExecutions) {
             quizStats = new QuizStats(ce, teacherDashboard);
+            studentStats = new StudentStats(ce, teacherDashboard);
             teacherDashboard.addQuizStats(quizStats);
+            teacherDashboard.addStudentStats(studentStats);
             quizStatsRepository.save(quizStats);
+            studentStatsRepository.save(studentStats);
         }
         teacherDashboardRepository.save(teacherDashboard);
+
         return new TeacherDashboardDto(teacherDashboard);
     }
 
