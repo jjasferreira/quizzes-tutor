@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.QuizStatsRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.TeacherRepository
 
@@ -53,6 +54,8 @@ class TeacherDashboardQuizStatsTest extends SpockTest {
         when: "a dashboard is created"
         teacherDashboardService.createTeacherDashboard(courseExecution.getId(), teacher.getId())
 
+        then: "the dashboard has 1 QuizStats object for the course execution"
+
         then: "the dashboard has 2 QuizStats objects for all course executions"
         teacherDashboardRepository.count() == 1L
         def td = teacherDashboardRepository.findAll().get(0)
@@ -61,7 +64,7 @@ class TeacherDashboardQuizStatsTest extends SpockTest {
         td.getQuizStats().get(1).getCourseExecution().getId() == courseExecution2.getId()
     }
 
-    def "create 2 more executions associated with that same course"() {
+    def "create 2 more executions associated with that same course" () {
         given: "two more previous course executions"
         teacher.addCourse(courseExecution)
         courseExecution3 = new CourseExecution(course, COURSE_1_ACRONYM, "2 Semestre 2018/2019", Course.Type.TECNICO, LOCAL_DATE_BEFORE)
@@ -126,6 +129,21 @@ class TeacherDashboardQuizStatsTest extends SpockTest {
 
         teacherDashboardRepository.count() == 0L
         quizStatsRepository.count() == 0L
+    }
+
+    def "remove teacher dashboard and check for QuizStats" () {
+        given: "a teacher in a course execution"
+        teacher.addCourse(courseExecution)
+        teacherDashboardService.createTeacherDashboard(courseExecution.getId(), teacher.getId())
+
+        when: "the user removes the dashboard"
+        def td = teacherDashboardRepository.findAll().get(0)
+        teacherDashboardService.removeTeacherDashboard(td.getId())
+
+        then: "the dashboard is removed and the QuizStats are removed"
+
+        teacherDashboardRepository.findAll().size() == 0L
+        quizStatsRepository.findAll().size() == 0L
     }
 
     @TestConfiguration
