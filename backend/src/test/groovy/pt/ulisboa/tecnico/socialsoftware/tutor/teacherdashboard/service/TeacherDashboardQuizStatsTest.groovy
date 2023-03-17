@@ -118,6 +118,37 @@ class TeacherDashboardQuizStatsTest extends SpockTest {
         quizStats.getNumQuizzes() == 1
     }
 
+    def "update all teacher dashboards" () {
+        given: "one teacher in two course executions of different courses, with one having a quiz"
+        def courseAlt = new Course(COURSE_2_NAME, Course.Type.TECNICO)
+        courseRepository.save(courseAlt)
+        def courseExecutionAlt = new CourseExecution(courseAlt, COURSE_2_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
+        courseExecutionRepository.save(courseExecutionAlt)
+        teacher.addCourse(courseExecution)
+        teacher.addCourse(courseExecutionAlt)
+        teacherDashboardService.createTeacherDashboard(courseExecution.getId(), teacher.getId())
+        teacherDashboardService.createTeacherDashboard(courseExecutionAlt.getId(), teacher.getId())
+        // Add a quiz to one of the course executions but not the other to test updateAllTeacherDashboards
+        def quiz = new Quiz()
+        quiz.setCourseExecution(courseExecution)
+        quizRepository.save(quiz)
+
+        when: "the teacher dashboards are updated"
+        teacherDashboardService.updateAllTeacherDashboards()
+
+        then: "only one dashboard has changed"
+        teacherDashboardRepository.count() == 2L
+        def td = teacherDashboardRepository.findAll().get(0)
+        def tdAlt = teacherDashboardRepository.findAll().get(1)
+        quizStatsRepository.count() == 3L
+        def quizStats1 = quizStatsRepository.findAll().get(0)
+        def quizStats3 = quizStatsRepository.findAll().get(2)
+        quizStats1 == td.getQuizStats().get(0)
+        quizStats1.getNumQuizzes() == 1
+        quizStats3 == tdAlt.getQuizStats().get(0)
+        quizStats3.getNumQuizzes() == 0
+    }
+
     def "remove teacher dashboard and check for QuizStats" () {
         given: "a teacher in a course execution"
         teacher.addCourse(courseExecution)
