@@ -127,7 +127,10 @@ public class TeacherDashboardService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void updateTeacherDashboard(int dashboardId) {
+    public void updateTeacherDashboard(Integer dashboardId) {
+        if (dashboardId == null || teacherDashboardRepository.findById(dashboardId).isEmpty()) {
+            throw new TutorException(DASHBOARD_NOT_FOUND);
+        }
         TeacherDashboard teacherDashboard = teacherDashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(DASHBOARD_NOT_FOUND, dashboardId));
         teacherDashboard.update();
         teacherDashboardRepository.save(teacherDashboard);
