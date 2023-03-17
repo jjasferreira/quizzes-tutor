@@ -101,8 +101,7 @@ public class TeacherDashboard implements DomainEntity {
         return quizStats;
     }
     public void addQuizStats(QuizStats quizStats) {
-        if (!this.quizStats.contains(quizStats))
-            this.quizStats.add(quizStats);
+        this.quizStats.add(quizStats);
     }
     public void update() {
         this.quizStats.forEach(QuizStats::update);
