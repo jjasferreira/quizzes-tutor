@@ -104,6 +104,22 @@ class TeacherDashboardQuestionStatsTest extends SpockTest {
         td.getQuestionStats().get(2).getCourseExecution().getId() == courseExecution6.getId()
     }
 
+    def "remove teacherDashboard"() {
+        given: "a teacherDashboard"
+        teacher.addCourse(courseExecution4)
+        teacherDashboardService.createTeacherDashboard(courseExecution4.getId(), teacher.getId())
+        
+        when: "it is removed"
+        def td = teacherDashboardRepository.findAll().get(0)
+        teacherDashboardService.removeTeacherDashboard(td.getId())
+
+        then: "there musn't be a teacherDashboard"
+        teacherDashboardRepository.findAll().size() == 0
+        questionStatsRepository.findAll().size() == 0
+
+    }
+
+
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }
