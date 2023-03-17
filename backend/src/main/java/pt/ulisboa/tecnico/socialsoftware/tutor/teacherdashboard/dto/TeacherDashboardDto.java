@@ -16,7 +16,6 @@ public class TeacherDashboardDto {
     private List<QuestionStatsDto> questionStats;
 
     private ArrayList<StudentStatsDto> studentStatsDtos;
-    private List<QuizStatsDto> quizStats;
 
     public TeacherDashboardDto() {
         this.questionStats = new ArrayList<>();
