@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,7 +31,7 @@ public class TeacherDashboardController {
         return teacherDashboardService.getTeacherDashboard(courseExecutionId, teacherId);
     }
 
-    @GetMapping("/teachers/dashboards/{dashboardId}/remove")
+    @DeleteMapping("/teachers/dashboards/{dashboardId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
     public void removeTeacherDashboard(@PathVariable int dashboardId) {
         teacherDashboardService.removeTeacherDashboard(dashboardId);
