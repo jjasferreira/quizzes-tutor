@@ -29,4 +29,10 @@ public class TeacherDashboardController {
         return teacherDashboardService.getTeacherDashboard(courseExecutionId, teacherId);
     }
 
+    @GetMapping("/teachers/dashboards/{dashboardId}/update")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
+    public void updateTeacherDashboard(@PathVariable int dashboardId) {
+        teacherDashboardService.updateTeacherDashboard(dashboardId);
+    }
+
 }
