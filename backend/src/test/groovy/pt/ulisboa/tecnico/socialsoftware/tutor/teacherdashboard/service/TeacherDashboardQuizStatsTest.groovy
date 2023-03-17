@@ -13,10 +13,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.QuizStatsRepository
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.QuizStatsRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.TeacherRepository
@@ -53,8 +55,6 @@ class TeacherDashboardQuizStatsTest extends SpockTest {
 
         when: "a dashboard is created"
         teacherDashboardService.createTeacherDashboard(courseExecution.getId(), teacher.getId())
-
-        then: "the dashboard has 1 QuizStats object for the course execution"
 
         then: "the dashboard has 2 QuizStats objects for all course executions"
         teacherDashboardRepository.count() == 1L
@@ -142,8 +142,8 @@ class TeacherDashboardQuizStatsTest extends SpockTest {
 
         then: "the dashboard is removed and the QuizStats are removed"
 
-        teacherDashboardRepository.findAll().size() == 0L
-        quizStatsRepository.findAll().size() == 0L
+        teacherDashboardRepository.count() == 0L
+        quizStatsRepository.count() == 0L
     }
 
     @TestConfiguration
