@@ -161,6 +161,20 @@ class TeacherDashboardQuestionStatsTest extends SpockTest {
 
     }
 
+    def "do not update teacherDashboard - control test"() {
+        given: "a teacherDashboard with a course and one question"
+        teacher.addCourse(courseExecution4)
+        teacherDashboardService.createTeacherDashboard(courseExecution4.getId(), teacher.getId())
+    
+        addQuestionToCourse(courseExecution4,1)
+        
+        when: "we get teacherDashboard WITHOUT updating"
+        def td = teacherDashboardRepository.findAll().get(0)
+
+        then: "there mustn't be a question shown"
+        td.getQuestionStats().get(0).getNumAvailable() == 0
+    }
+
     // Auxiliary functions ---------------------------------------------------------------------------------------------
 
     def addQuestionToCourse (courseExecution, number) {
