@@ -41,6 +41,8 @@ public class TeacherDashboardController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void updateAllTeacherDashboards() {
         teacherDashboardService.updateAllTeacherDashboards();
+    }
+    
     @GetMapping("/teachers/dashboards/{dashboardId}/update")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
     public void updateTeacherDashboard(@PathVariable int dashboardId) {
