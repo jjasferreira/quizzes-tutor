@@ -109,7 +109,6 @@ public class TeacherDashboardService {
 
         // Create a QuestionStats object for the last three course executions (if they exist) and add to the dashboard
         QuestionStats questionStats = new QuestionStats(teacherDashboard, courseExecution);
-        teacherDashboard.addQuestionStats(questionStats);
         questionStatsRepository.save(questionStats);
 
         for (CourseExecution ce : courseExecutions) {
@@ -118,7 +117,6 @@ public class TeacherDashboardService {
             questionStats = new QuestionStats(teacherDashboard, ce);
             teacherDashboard.addQuizStats(quizStats);
             teacherDashboard.addStudentStats(studentStats);
-            teacherDashboard.addQuestionStats(questionStats);
             quizStatsRepository.save(quizStats);
             studentStatsRepository.save(studentStats);
             questionStatsRepository.save(questionStats);
