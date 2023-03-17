@@ -135,6 +135,32 @@ class TeacherDashboardQuestionStatsTest extends SpockTest {
 
     }
 
+    def "update all teachers"(){
+        given: "2 teachers each one with a dashboard and a course (with one question)"
+        def teacher2 = new Teacher(USER_2_NAME, false)
+        teacherRepository.save(teacher2)
+
+        teacher2.addCourse(courseExecution)
+        teacherDashboardService.createTeacherDashboard(courseExecution.getId(), teacher2.getId())
+
+        teacher.addCourse(courseExecution4)
+        teacherDashboardService.createTeacherDashboard(courseExecution4.getId(), teacher.getId())
+
+        addQuestionToCourse(courseExecution4,1)
+        addQuestionToCourse(courseExecution,1)
+
+        when: "update all teacherDashboards"
+        teacherDashboardService.updateAllTeacherDashboards()
+
+        then: "all must be updated and display the avaliable questions"
+        def td_1 = teacherDashboardRepository.findAll().get(0)
+        def td_2 = teacherDashboardRepository.findAll().get(1)
+
+        td_1.getQuestionStats().get(0).getNumAvailable() == 1
+        td_2.getQuestionStats().get(0).getNumAvailable() == 1
+
+    }
+
     // Auxiliary functions ---------------------------------------------------------------------------------------------
 
     def addQuestionToCourse (courseExecution, number) {
