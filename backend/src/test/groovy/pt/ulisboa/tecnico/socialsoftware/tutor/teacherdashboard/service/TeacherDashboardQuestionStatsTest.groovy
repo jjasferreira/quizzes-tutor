@@ -119,6 +119,75 @@ class TeacherDashboardQuestionStatsTest extends SpockTest {
 
     }
 
+    def "test update teacherDashboard"() {
+        given: "a teacherDashboard and one course with one question"
+        teacher.addCourse(courseExecution4)
+        teacherDashboardService.createTeacherDashboard(courseExecution4.getId(), teacher.getId())
+    
+        addQuestionToCourse(courseExecution4,1)
+        
+        when: "update teacherDashbaord"
+        def td = teacherDashboardRepository.findAll().get(0)
+        teacherDashboardService.updateTeacherDashboard(td.getId())
+
+        then: "created questions has to appear"
+        td.getQuestionStats().get(0).getNumAvailable() == 1
+
+    }
+
+    // Auxiliary functions ---------------------------------------------------------------------------------------------
+
+    def addQuestionToCourse (courseExecution, number) {
+        Question question = createQuestion()
+        Quiz quiz = createQuiz(courseExecution)
+        QuizQuestion quizQuestion = createQuizQuestion(quiz, question, number)
+
+        courseExecution.getCourse().addQuestion(question)
+        quiz.addQuizQuestion(quizQuestion)
+        courseExecution.addQuiz(quiz)
+    }
+    
+    def createQuizQuestion(quiz, question, seq) {
+        def quizQuestion = new QuizQuestion(quiz, question, seq)
+        quizQuestionRepository.save(quizQuestion)
+        return quizQuestion
+    } 
+
+    def createQuiz (courseExecution) {
+        def quiz = new Quiz()
+        quiz.setKey(1)
+        quiz.setTitle("Quiz Title")
+        quiz.setType(Quiz.QuizType.PROPOSED.toString())
+        quiz.setCourseExecution(courseExecution)
+        quiz.setAvailableDate(DateHandler.now())
+        quizRepository.save(quiz)
+        return quiz
+    }
+
+    def createQuestion() {
+        def newQuestion = new Question()
+        newQuestion.setTitle("Question Title")
+        newQuestion.setCourse(course2)
+        newQuestion.setStatus(Question.Status.AVAILABLE)
+        def questionDetails = new MultipleChoiceQuestion()
+        newQuestion.setQuestionDetails(questionDetails)
+        questionRepository.save(newQuestion)
+
+        def option = new Option()
+        option.setContent("Option Content")
+        option.setCorrect(true)
+        option.setSequence(0)
+        option.setQuestionDetails(questionDetails)
+        optionRepository.save(option)
+        def optionKO = new Option()
+        optionKO.setContent("Option Content")
+        optionKO.setCorrect(false)
+        optionKO.setSequence(1)
+        optionKO.setQuestionDetails(questionDetails)
+        optionRepository.save(optionKO)
+
+        return newQuestion;
+    }
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
