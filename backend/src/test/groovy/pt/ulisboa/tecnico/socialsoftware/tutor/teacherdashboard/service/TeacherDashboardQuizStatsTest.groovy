@@ -3,9 +3,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
+import spock.lang.Unroll
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -71,6 +74,19 @@ class TeacherDashboardQuizStatsTest extends SpockTest {
         td.getQuizStats().get(1).getCourseExecution().getId() == courseExecution2.getId()
         td.getQuizStats().get(2).getCourseExecution().getId() == courseExecution3.getId()
 
+    }
+
+    @Unroll
+    def "update teacher dashboard with invalid ID" () {
+        when: "incorrect dashboard ID is given to updateTeacherDashboard"
+        teacherDashboardService.updateTeacherDashboard(dashboardId)
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.DASHBOARD_NOT_FOUND
+
+        where:
+        dashboardId << [null, 10, -1]
     }
 
     def "update teacher dashboard with valid ID" () {
