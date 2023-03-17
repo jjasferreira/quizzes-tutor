@@ -32,7 +32,7 @@ public class TeacherDashboardController {
     }
 
     @DeleteMapping("/teachers/dashboards/{dashboardId}")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#dashboardId, 'TEACHER_DASHBOARD.ACCESS')")
     public void removeTeacherDashboard(@PathVariable int dashboardId) {
         teacherDashboardService.removeTeacherDashboard(dashboardId);
     }
@@ -43,8 +43,8 @@ public class TeacherDashboardController {
         teacherDashboardService.updateAllTeacherDashboards();
     }
     
-    @GetMapping("/teachers/dashboards/{dashboardId}/update")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
+    @PutMapping("/teachers/dashboards/{dashboardId}/update")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#dashboardId, 'TEACHER_DASHBOARD.ACCESS')")
     public void updateTeacherDashboard(@PathVariable int dashboardId) {
         teacherDashboardService.updateTeacherDashboard(dashboardId);
     }
