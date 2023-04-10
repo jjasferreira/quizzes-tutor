@@ -8,16 +8,16 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain.TeacherDashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.studentdashboard.domain.StudentDashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.studentdashboard.domain.DifficultQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.studentdashboard.domain.FailedAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.studentdashboard.domain.WeeklyScore;
-import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.TeacherDashboardRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.studentdashboard.repository.StudentDashboardRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.studentdashboard.repository.DifficultQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.studentdashboard.repository.FailedAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.studentdashboard.repository.WeeklyScoreRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain.TeacherDashboard;
+import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.repository.TeacherDashboardRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository;
@@ -79,10 +79,10 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     private CourseExecutionRepository courseExecutionRepository;
 
     @Autowired
-    private TeacherDashboardRepository teacherDashboardRepository;
+    private StudentDashboardRepository studentDashboardRepository;
 
     @Autowired
-    private StudentDashboardRepository studentDashboardRepository;
+    private TeacherDashboardRepository teacherDashboardRepository;
 
     @Autowired
     private WeeklyScoreRepository weeklyScoreRepository;
@@ -183,12 +183,12 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                 case "REPLY.ACCESS":
                     Reply reply = replyRepository.findById(id).orElse(null);
                     return reply != null && userHasThisExecution(authUser, reply.getDiscussion().getCourseExecution().getId());
-                case "TEACHER_DASHBOARD.ACCESS":
-                    TeacherDashboard teacherDashboard = teacherDashboardRepository.findById(id).orElse(null);
-                    return teacherDashboard != null && teacherDashboard.getTeacher().getId().equals(userId);
                 case "DASHBOARD.ACCESS":
                     StudentDashboard studentDashboard = studentDashboardRepository.findById(id).orElse(null);
                     return studentDashboard != null && studentDashboard.getStudent().getId().equals(userId);
+                case "TEACHER.DASHBOARD.ACCESS":
+                    TeacherDashboard teacherDashboard = teacherDashboardRepository.findById(id).orElse(null);
+                    return teacherDashboard != null && teacherDashboard.getTeacher().getId().equals(userId);
                 case "WEEKLYSCORE.ACCESS":
                     WeeklyScore weeklyScore = weeklyScoreRepository.findById(id).orElse(null);
                     return weeklyScore != null && weeklyScore.getDashboard().getStudent().getId().equals(userId);

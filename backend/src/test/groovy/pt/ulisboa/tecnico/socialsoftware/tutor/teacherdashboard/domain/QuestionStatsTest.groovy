@@ -24,7 +24,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswe
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
-
 @DataJpaTest
 class QuestionStatsTest extends SpockTest {
 

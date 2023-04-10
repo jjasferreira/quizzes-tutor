@@ -3,36 +3,28 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain.QuestionStats;
 
 public class QuestionStatsDto {
-    
-    private Integer id;
-
     private int numAvailable;
-
     private int answeredQuestionsUnique;
-
     private float averageQuestionsAnswered;
+    private int courseExecutionYear;
 
     public QuestionStatsDto() {
-
     }
 
     public QuestionStatsDto(QuestionStats questionStats) {
-        this.id = questionStats.getId();
         this.numAvailable = questionStats.getNumAvailable();
         this.answeredQuestionsUnique = questionStats.getAnsweredQuestionsUnique();
         this.averageQuestionsAnswered = questionStats.getAverageQuestionsAnswered();
-    }
 
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
+        /*
+         * The course execution is guaranteed to have year here, so we
+         * do not catch the exception in this place
+         */
+        this.courseExecutionYear = questionStats.getCourseExecution().getYear();
     }
 
     public int getNumAvailable() {
-        return this.numAvailable;
+        return numAvailable;
     }
 
     public void setNumAvailable(int numAvailable) {
@@ -40,7 +32,7 @@ public class QuestionStatsDto {
     }
 
     public int getAnsweredQuestionsUnique() {
-        return this.answeredQuestionsUnique;
+        return answeredQuestionsUnique;
     }
 
     public void setAnsweredQuestionsUnique(int answeredQuestionsUnique) {
@@ -48,22 +40,28 @@ public class QuestionStatsDto {
     }
 
     public float getAverageQuestionsAnswered() {
-        return this.averageQuestionsAnswered;
+        return averageQuestionsAnswered;
     }
 
     public void setAverageQuestionsAnswered(float averageQuestionsAnswered) {
         this.averageQuestionsAnswered = averageQuestionsAnswered;
     }
 
+    public int getCourseExecutionYear() {
+        return courseExecutionYear;
+    }
+
+    public void setCourseExecutionYear(int courseExecutionYear) {
+        this.courseExecutionYear = courseExecutionYear;
+    }
+
     @Override
     public String toString() {
         return "QuestionStatsDto{" +
-                "id=" + this.id +
-                ", numAvailable=" + this.numAvailable +
-                ", answeredQuestionsUnique=" + this.answeredQuestionsUnique +
-                ", averageQuestionsAnswered=" + this.averageQuestionsAnswered +
+                "numAvailable=" + numAvailable +
+                ", answeredQuestionsUnique=" + answeredQuestionsUnique +
+                ", averageQuestionsAnswered=" + averageQuestionsAnswered +
+                ", courseExecutionYear=" + courseExecutionYear +
                 '}';
-
     }
 }
-

@@ -1,21 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.teacherdashboard.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
-
-import java.util.HashSet;
-import java.util.Set;
-
-
 import javax.persistence.*;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class QuizStats implements DomainEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -28,14 +22,14 @@ public class QuizStats implements DomainEntity {
 
     private int numQuizzes;
 
-    private int uniqueQuizzesSolved;
+    private int numUniqueAnsweredQuizzes;
 
     private float averageQuizzesSolved;
 
     public QuizStats() {
     }
 
-    public QuizStats(CourseExecution courseExecution, TeacherDashboard teacherDashboard) {
+    public QuizStats(TeacherDashboard teacherDashboard, CourseExecution courseExecution) {
         setCourseExecution(courseExecution);
         setTeacherDashboard(teacherDashboard);
     }
@@ -64,22 +58,23 @@ public class QuizStats implements DomainEntity {
 
     public void setTeacherDashboard(TeacherDashboard teacherDashboard) {
         this.teacherDashboard = teacherDashboard;
+        this.teacherDashboard.addQuizStats(this);
     }
 
     public int getNumQuizzes() {
         return numQuizzes;
     }
 
+    public int getNumUniqueAnsweredQuizzes() {
+        return numUniqueAnsweredQuizzes;
+    }
+
     public void setNumQuizzes(int numQuizzes) {
         this.numQuizzes = numQuizzes;
     }
 
-    public int getUniqueQuizzesSolved() {
-        return uniqueQuizzesSolved;
-    }
-
-    public void setUniqueQuizzesSolved(int uniqueQuizzesSolved) {
-        this.uniqueQuizzesSolved = uniqueQuizzesSolved;
+    public void setNumUniqueAnsweredQuizzes(int numUniqueAnsweredQuizzes) {
+        this.numUniqueAnsweredQuizzes = numUniqueAnsweredQuizzes;
     }
 
     public float getAverageQuizzesSolved() {
@@ -90,65 +85,44 @@ public class QuizStats implements DomainEntity {
         this.averageQuizzesSolved = averageQuizzesSolved;
     }
 
-    private int getNumQuizzesExecution() {
-        int quizCount = 0;
-        for (Quiz quiz: getCourseExecution().getQuizzes()) {
-            quizCount++;
-        }
-        return quizCount;
+    public void update() {
+        int quizzesCount = courseExecution.getNumberOfQuizzes();
+        this.setNumQuizzes(quizzesCount);
+
+        int uniqueAnsweredQuizzes = (int) courseExecution.getQuizzes().stream()
+                .distinct()
+                .map(q -> q.getQuizAnswers().stream()
+                        .filter(QuizAnswer::isCompleted).collect(Collectors.toSet()))
+                .filter(qa -> !qa.isEmpty())
+                .count();
+        this.setNumUniqueAnsweredQuizzes(uniqueAnsweredQuizzes);
+
+        int totalUniqueSolvedQuizzes = courseExecution.getQuizzes().stream()
+                .distinct()
+                .mapToInt(q -> q.getQuizAnswers().stream()
+                        .filter(QuizAnswer::isCompleted).collect(Collectors.toSet()).size())
+                .sum();
+
+        int students = courseExecution.getStudents().size();
+        float averageQuizzesSolved = students > 0 ? (float) totalUniqueSolvedQuizzes / students : 0.0f;
+        this.setAverageQuizzesSolved(averageQuizzesSolved);
+
     }
 
-    private int getUniqueQuizzesSolvedExecution() {
-        int quizCount = 0;
-        for (Quiz quiz: getCourseExecution().getQuizzes()) {
-            for (QuizAnswer quizAnswer: quiz.getQuizAnswers()) {
-                if (quizAnswer.isCompleted()) {
-                    quizCount++;
-                    break;
-                }
-            }
-        }
-        return quizCount;
-    }
-
-    private float getAverageQuizzesSolvedExecution() {
-        int quizCount = 0;
-        int studentCount = 0;
-        CourseExecution execution = getCourseExecution();
-        for (Student student: execution.getStudents()) {
-            studentCount++;
-            for (QuizAnswer quizAnswer: student.getQuizAnswers()) {
-                if (quizAnswer.getQuiz().getCourseExecution() == execution && quizAnswer.isCompleted()) {
-                    quizCount++;
-                }
-            }
-        }
-        if (studentCount == 0) {
-            return 0;
-        }
-        return (float) quizCount / studentCount;
+    public void accept(Visitor visitor) {
+        // only used for XML generation
     }
 
     @Override
     public String toString() {
-        return "QuizStats{id=" + id +
-                ", courseExecution=" + courseExecution +
-                ", teacherDashboard=" + teacherDashboard +
+        return "QuizStats{" +
+                "id=" + id +
+                ", courseExecutionId=" + courseExecution.getId() +
+                ", teacherDashboardId=" + teacherDashboard.getId() +
                 ", numQuizzes=" + numQuizzes +
-                ", uniqueQuizzesSolved=" + uniqueQuizzesSolved +
+                ", numUniqueAnsweredQuizzes=" + numUniqueAnsweredQuizzes +
                 ", averageQuizzesSolved=" + averageQuizzesSolved +
                 "}";
-    }
-
-    @Override
-    public void accept(Visitor visitor) {
-        // Only used for XML generation
-    }
-
-    public void update(){
-        setNumQuizzes(getNumQuizzesExecution());
-        setUniqueQuizzesSolved(getUniqueQuizzesSolvedExecution());
-        setAverageQuizzesSolved(getAverageQuizzesSolvedExecution());
     }
 
 }
