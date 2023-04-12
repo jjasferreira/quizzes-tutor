@@ -3,8 +3,6 @@
     <h2>Statistics for this course execution</h2>
     <div v-if="teacherDashboard != null" class="stats-container">
       <div class="items">
-        <div ref="numQuizzes" class="icon-wrapper">
-          <animated-number :number="teacherDashboard.quizStats[0].numQuizzes" />
         <div ref="totalStudents" class="icon-wrapper">
           <animated-number :number="teacherDashboard.numStudents" data-cy="numStudents"/>
         </div>
@@ -36,7 +34,7 @@
       <!-------------------->
       <div class="items">
         <div ref="numAvailable" class="icon-wrapper">
-          <animated-number :number="teacherDashboard.numAvailable" data-cy="numAvailable"/>
+          <animated-number :number="teacherDashboard.questionStats[0].numAvailable" data-cy="numAvailable"/>
         </div>
         <div class="project-name">
           <p>Number of Questions</p>
@@ -45,7 +43,7 @@
       <!-------------------->
       <div class="items">
         <div ref="answeredQuestionsUnique" class="icon-wrapper">
-          <animated-number :number="teacherDashboard.answeredQuestionsUnique" data-cy="answeredQuestionsUnique"/>
+          <animated-number :number="teacherDashboard.questionStats[0].answeredQuestionsUnique" data-cy="answeredQuestionsUnique"/>
         </div>
         <div class="project-name">
           <p>Number of Questions Solves (Unique)</p>
@@ -54,18 +52,26 @@
       <!-------------------->
       <div class="items">
         <div ref="averageQuestionsAnswered" class="icon-wrapper">
-          <animated-number :number="teacherDashboard.averageQuestionsAnswered" data-cy="averageQuestionsAnswered" />
+          <animated-number :number="teacherDashboard.questionStats[0].averageQuestionsAnswered" data-cy="averageQuestionsAnswered" />
         </div>
         <div class="project-name">
-          <p>Number of Questions Correctly Solved</p>
+          <p>Average Answered Questions</p>
+        </div>
+      </div>
+      <div class="items">
+        <div ref="numQuizzes" class="icon-wrapper">
+          <animated-number :number="teacherDashboard.quizStats[0].numQuizzes" />
+        </div>
+        <div class="project-name">
+          <p>Number of quizzes</p>
         </div>
       </div>
     </div>
     <h2 style="margin-bottom: 10px">
       Comparison with previous course executions
     </h2>
-    <div v-if="teacherDashboard != null" class="stats-container">
-      <div style="flex-direction: column">
+    <div v-if="teacherDashboard != null" class="stats-container" style="gap: 30px;">
+      <div style="flex-direction: row">
         <h4 style="color: white; background-color: #2c3e50">Quizzes</h4>
         <div class="bar-chart">
           <div ref="quizStatsBarChart">
@@ -75,9 +81,18 @@
           </div>
         </div>
       </div>
+      <div style="flex-direction: row">
+        <h4 style="color: white; background-color: #2c3e50">Questions</h4>
+        <div class="bar-chart">
+          <div ref="questionStatsBarChart">
+            <question-chart
+              :questionStats="teacherDashboard.questionStats"
+            ></question-chart>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script lang="ts">
@@ -86,9 +101,10 @@ import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
 import TeacherDashboard from '@/models/dashboard/TeacherDashboard';
 import TeacherGraphsView from '@/views/teacher/dashboard/TeacherGraphsView.vue';
+import QuestionChart from '@/views/teacher/dashboard/QuestionChart.vue';
 
 @Component({
-  components: { AnimatedNumber, TeacherGraphsView },
+  components: { AnimatedNumber, TeacherGraphsView, QuestionChart },
 })
 export default class TeacherStatsView extends Vue {
   @Prop() readonly dashboardId!: number;
@@ -106,6 +122,11 @@ export default class TeacherStatsView extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+.stats-container-graph{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
 .stats-container {
   display: flex;
   flex-direction: row;
@@ -114,21 +135,21 @@ export default class TeacherStatsView extends Vue {
   align-items: stretch;
   align-content: center;
   height: 100%;
+}
 
-  .items {
-    background-color: rgba(255, 255, 255, 0.75);
-    color: #1976d2;
-    border-radius: 5px;
-    flex-basis: 25%;
-    margin: 20px;
-    cursor: pointer;
-    transition: all 0.6s;
-  }
+.items {
+  background-color: rgba(255, 255, 255, 0.75);
+  color: #1976d2;
+  border-radius: 5px;
+  flex-basis: 25%;
+  margin: 20px;
+  cursor: pointer;
+  transition: all 0.6s;
+}
 
-  .bar-chart {
-    background-color: rgba(255, 255, 255, 0.9);
-    height: 400px;
-  }
+.bar-chart {
+  background-color: rgba(255, 255, 255, 0.9);
+  height: 400px;
 }
 
 .icon-wrapper,

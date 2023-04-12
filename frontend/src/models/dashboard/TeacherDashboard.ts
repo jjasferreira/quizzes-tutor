@@ -1,9 +1,11 @@
 import QuizStats from './QuizStats';
+import QuestionStats from './QuestionStats'
 import { Dictionary } from "vue-router/types/router";
 
 export default class TeacherDashboard {
   id!: number;
   quizStats!: QuizStats[];
+  questionStats!: QuestionStats[];
   // exclamation mark tells typescript that these values can never be NULL
   numStudents!: number;
 
@@ -13,7 +15,7 @@ export default class TeacherDashboard {
   averageQuestionsAnswered!: number;
 
   studentStats!: Array<Dictionary<number>>;
-  questionStats!: Array<Dictionary<number>>;
+
 
   constructor(jsonObj?: TeacherDashboard) {
     if (jsonObj) {
@@ -23,17 +25,12 @@ export default class TeacherDashboard {
           (quizStats: QuizStats) => new QuizStats(quizStats)
         );
       }
-      
-      if(jsonObj.questionStats){
-        this.questionStats = jsonObj.questionStats;
-        this.studentStats = jsonObj.studentStats;
-        this.numStudents = this.studentStats[0]['numStudents'];
-        
-        this.numAvailable = this.questionStats[0]['numAvailable'];
-        this.answeredQuestionsUnique = this.questionStats[0]['answeredQuestionsUnique'];
-        this.averageQuestionsAnswered = this.questionStats[0]['averageQuestionsAnswered'];
+      if (jsonObj.questionStats) {
+        this.questionStats = jsonObj.questionStats.map(
+          (questionStats : QuestionStats) => new QuestionStats(questionStats)
+        );
       }
-      console.log(this.questionStats[0])
+      
     }
   }
 }
