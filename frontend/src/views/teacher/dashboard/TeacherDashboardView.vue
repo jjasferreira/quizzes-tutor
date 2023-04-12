@@ -15,7 +15,7 @@ import TeacherStatsView from '@/views/teacher/dashboard/TeacherStatsView.vue';
 
 @Component({
   components: {
-    TeacherStatsView
+    TeacherStatsView,
   },
 })
 export default class TeacherDashboardView extends Vue {

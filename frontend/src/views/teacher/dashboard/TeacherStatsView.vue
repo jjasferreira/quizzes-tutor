@@ -3,15 +3,35 @@
     <h2>Statistics for this course execution</h2>
     <div v-if="teacherDashboard != null" class="stats-container">
       <div class="items">
-        <div ref="totalStudents" class="icon-wrapper">
-          <animated-number :number="teacherDashboard.numberOfStudents" />
+        <div ref="numQuizzes" class="icon-wrapper">
+          <animated-number :number="teacherDashboard.quizStats[0].numQuizzes" />
         </div>
         <div class="project-name">
           <p>Number of Students</p>
         </div>
       </div>
+      <div class="items">
+        <div ref="uniqueQuizzesSolved" class="icon-wrapper">
+          <animated-number
+            :number="teacherDashboard.quizStats[0].uniqueQuizzesSolved"
+          />
+        </div>
+        <div class="project-name">
+          <p>Number of Quizzes Solved (Unique)</p>
+        </div>
+      </div>
+      <div class="items">
+        <div ref="averageQuizzesSolved" class="icon-wrapper">
+          <animated-number
+            :number="teacherDashboard.quizStats[0].averageQuizzesSolved"
+          />
+        </div>
+        <div class="project-name">
+          <p>Number of Quizzes Solved (Unique, Average Per Student)</p>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -23,7 +43,6 @@ import TeacherDashboard from '@/models/dashboard/TeacherDashboard';
 @Component({
   components: { AnimatedNumber },
 })
-
 export default class TeacherStatsView extends Vue {
   @Prop() readonly dashboardId!: number;
   teacherDashboard: TeacherDashboard | null = null;
@@ -38,7 +57,6 @@ export default class TeacherStatsView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 }
-
 </script>
 
 <style lang="scss" scoped>
@@ -62,7 +80,7 @@ export default class TeacherStatsView extends Vue {
   }
 
   .bar-chart {
-    background-color: rgba(255, 255, 255, 0.90);
+    background-color: rgba(255, 255, 255, 0.9);
     height: 400px;
   }
 }
