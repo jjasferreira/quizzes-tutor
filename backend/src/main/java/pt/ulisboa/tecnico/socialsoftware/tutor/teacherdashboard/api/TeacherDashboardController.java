@@ -28,7 +28,9 @@ public class TeacherDashboardController {
     public TeacherDashboardDto getTeacherDashboard(Principal principal, @PathVariable int courseExecutionId) {
         int teacherId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
 
-        return teacherDashboardService.getTeacherDashboard(courseExecutionId, teacherId);
+        TeacherDashboardDto dto = teacherDashboardService.getTeacherDashboard(courseExecutionId, teacherId);
+        updateTeacherDashboard(dto.getId());
+        return dto;
     }
 
     @PutMapping("/teachers/dashboards/{dashboardId}")

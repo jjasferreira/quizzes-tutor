@@ -5,6 +5,8 @@
       <div class="items">
         <div ref="numQuizzes" class="icon-wrapper">
           <animated-number :number="teacherDashboard.quizStats[0].numQuizzes" />
+        <div ref="totalStudents" class="icon-wrapper">
+          <animated-number :number="teacherDashboard.numStudents" data-cy="numStudents"/>
         </div>
         <div class="project-name">
           <p>Number of Quizzes</p>
@@ -34,7 +36,7 @@
       <!-------------------->
       <div class="items">
         <div ref="numAvailable" class="icon-wrapper">
-          <animated-number :number="teacherDashboard.numAvailable" />
+          <animated-number :number="teacherDashboard.numAvailable" data-cy="numAvailable"/>
         </div>
         <div class="project-name">
           <p>Number of Questions</p>
@@ -43,7 +45,7 @@
       <!-------------------->
       <div class="items">
         <div ref="answeredQuestionsUnique" class="icon-wrapper">
-          <animated-number :number="teacherDashboard.answeredQuestionsUnique" />
+          <animated-number :number="teacherDashboard.answeredQuestionsUnique" data-cy="answeredQuestionsUnique"/>
         </div>
         <div class="project-name">
           <p>Number of Questions Solves (Unique)</p>
@@ -52,13 +54,14 @@
       <!-------------------->
       <div class="items">
         <div ref="averageQuestionsAnswered" class="icon-wrapper">
-          <animated-number :number="teacherDashboard.averageQuestionsAnswered" />
+          <animated-number :number="teacherDashboard.averageQuestionsAnswered" data-cy="averageQuestionsAnswered" />
         </div>
         <div class="project-name">
           <p>Number of Questions Correctly Solved</p>
         </div>
       </div>
     </div>
+<<<<<<< HEAD
     <h2 style="margin-bottom: 10px">
       Comparison with previous course executions
     </h2>
@@ -75,6 +78,22 @@
       </div>
     </div>
   </div>
+=======
+    <div  v-if="teacherDashboard != null" class="stats-container">
+      <h2>Comparison with previous course executions</h2>
+
+      <!-- Questions -->
+      <!----<div class="items">
+        <Bar  id="question-stats-chart" 
+              :options="chartOptions" 
+              :data="question-stats-chart" />
+      </div>-->
+
+    </div>
+
+    
+</div>
+>>>>>>> 66976829 (fix: Bug in stats Refs: #92)
 </template>
 
 <script lang="ts">
@@ -82,7 +101,14 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
 import TeacherDashboard from '@/models/dashboard/TeacherDashboard';
+<<<<<<< HEAD
 import TeacherGraphsView from '@/views/teacher/dashboard/TeacherGraphsView.vue';
+=======
+// chart.js needs to be imported as legacy to work with vue2
+import { Bar } from 'vue-chartjs/legacy'
+import { Chart as Chart, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+
+>>>>>>> 66976829 (fix: Bug in stats Refs: #92)
 
 @Component({
   components: { AnimatedNumber, TeacherGraphsView },
@@ -102,7 +128,6 @@ export default class TeacherStatsView extends Vue {
   }
 }
 </script>
-
 <style lang="scss" scoped>
 .stats-container {
   display: flex;
