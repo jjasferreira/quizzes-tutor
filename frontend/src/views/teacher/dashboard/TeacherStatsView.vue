@@ -3,6 +3,36 @@
     <h2>Statistics for this course execution</h2>
     <div v-if="teacherDashboard != null" class="stats-container">
       <div class="items">
+        <div ref="numStudents" class="icon-wrapper">
+          <animated-number
+            :number="teacherDashboard.studentStats[0].numStudents"
+          />
+        </div>
+        <div class="project-name">
+          <p>Number of Students</p>
+        </div>
+      </div>
+      <div class="items">
+        <div ref="numMore75CorrectQuestions" class="icon-wrapper">
+          <animated-number
+            :number="teacherDashboard.studentStats[0].numMore75CorrectQuestions"
+          />
+        </div>
+        <div class="project-name">
+          <p>Number of Students with more than 75% correct answers</p>
+        </div>
+      </div>
+      <div class="items">
+        <div ref="numAtLeast3Quizzes" class="icon-wrapper">
+          <animated-number
+            :number="teacherDashboard.studentStats[0].numAtLeast3Quizzes"
+          />
+        </div>
+        <div class="project-name">
+          <p>Number of Students with at least 3 Quizzes Completed</p>
+        </div>
+      </div>
+      <div class="items">
         <div ref="numQuizzes" class="icon-wrapper">
           <animated-number
             :number="teacherDashboard.quizStats[0].numQuizzes"
@@ -139,6 +169,7 @@ export default class TeacherStatsView extends Vue {
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .stats-container-graph {
   display: flex;
