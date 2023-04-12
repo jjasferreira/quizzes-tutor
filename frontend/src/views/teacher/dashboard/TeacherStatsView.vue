@@ -7,7 +7,7 @@
           <animated-number :number="teacherDashboard.quizStats[0].numQuizzes" />
         </div>
         <div class="project-name">
-          <p>Number of Students</p>
+          <p>Number of Quizzes</p>
         </div>
       </div>
       <div class="items">
@@ -31,6 +31,21 @@
         </div>
       </div>
     </div>
+    <h2 style="margin-bottom: 10px">
+      Comparison with previous course executions
+    </h2>
+    <div v-if="teacherDashboard != null" class="stats-container">
+      <div style="flex-direction: column">
+        <h4 style="color: white; background-color: #2c3e50">Quizzes</h4>
+        <div class="bar-chart">
+          <div ref="quizStatsBarChart">
+            <teacher-graphs-view
+              :quizStats="teacherDashboard.quizStats"
+            ></teacher-graphs-view>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -39,9 +54,10 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
 import TeacherDashboard from '@/models/dashboard/TeacherDashboard';
+import TeacherGraphsView from '@/views/teacher/dashboard/TeacherGraphsView.vue';
 
 @Component({
-  components: { AnimatedNumber },
+  components: { AnimatedNumber, TeacherGraphsView },
 })
 export default class TeacherStatsView extends Vue {
   @Prop() readonly dashboardId!: number;
