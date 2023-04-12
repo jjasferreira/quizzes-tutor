@@ -30,6 +30,34 @@
           <p>Number of Quizzes Solved (Unique, Average Per Student)</p>
         </div>
       </div>
+      <!-- QUESTIONS -->
+      <!-------------------->
+      <div class="items">
+        <div ref="numAvailable" class="icon-wrapper">
+          <animated-number :number="teacherDashboard.numAvailable" />
+        </div>
+        <div class="project-name">
+          <p>Number of Questions</p>
+        </div>
+      </div>
+      <!-------------------->
+      <div class="items">
+        <div ref="answeredQuestionsUnique" class="icon-wrapper">
+          <animated-number :number="teacherDashboard.answeredQuestionsUnique" />
+        </div>
+        <div class="project-name">
+          <p>Number of Questions Solves (Unique)</p>
+        </div>
+      </div>
+      <!-------------------->
+      <div class="items">
+        <div ref="averageQuestionsAnswered" class="icon-wrapper">
+          <animated-number :number="teacherDashboard.averageQuestionsAnswered" />
+        </div>
+        <div class="project-name">
+          <p>Number of Questions Correctly Solved</p>
+        </div>
+      </div>
     </div>
     <h2 style="margin-bottom: 10px">
       Comparison with previous course executions
