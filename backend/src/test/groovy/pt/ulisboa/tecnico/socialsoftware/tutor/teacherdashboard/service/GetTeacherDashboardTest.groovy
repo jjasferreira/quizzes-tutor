@@ -58,6 +58,8 @@ class GetTeacherDashboardTest extends SpockTest {
 
     def "get a dashboard of demo course, which does not have year defined"() {
         when: "getting a dashboard"
+
+        externalCourseExecution.setAcademicTerm(null);
         teacherDashboardService.getTeacherDashboard(courseExecutionDto.getCourseExecutionId(), authUserDto.getId())
 
         then: "invalid academic term exception is raised"
