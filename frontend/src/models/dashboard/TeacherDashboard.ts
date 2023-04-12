@@ -1,8 +1,10 @@
+import StudentStats from './StudentStats';
 import QuizStats from './QuizStats';
 import QuestionStats from './QuestionStats'
 
 export default class TeacherDashboard {
   id!: number;
+  studentStats!: StudentStats[];
   quizStats!: QuizStats[];
   questionStats!: QuestionStats[];
 
@@ -20,6 +22,11 @@ export default class TeacherDashboard {
         );
       }
       
+    }
+    if (jsonObj?.studentStats) {
+      this.studentStats = jsonObj.studentStats.map(
+        (studentStats: StudentStats) => new StudentStats(studentStats)
+      );
     }
   }
 }
