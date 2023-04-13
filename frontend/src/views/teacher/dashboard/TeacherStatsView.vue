@@ -3,10 +3,10 @@
     <h2>Statistics for this course execution</h2>
     <div v-if="teacherDashboard != null" class="stats-container">
       <div class="items">
-        <div ref="totalStudents" class="icon-wrapper">
+        <div ref="numQuizzes" class="icon-wrapper">
           <animated-number
-            :number="teacherDashboard.numStudents"
-            data-cy="numStudents"
+            :number="teacherDashboard.quizStats[0].numQuizzes"
+            data-cy="numQuizzes"
           />
         </div>
         <div class="project-name">
@@ -17,6 +17,7 @@
         <div ref="numUniqueAnsweredQuizzes" class="icon-wrapper">
           <animated-number
             :number="teacherDashboard.quizStats[0].numUniqueAnsweredQuizzes"
+            data-cy="numUniqueAnsweredQuizzes"
           />
         </div>
         <div class="project-name">
@@ -27,6 +28,7 @@
         <div ref="averageQuizzesSolved" class="icon-wrapper">
           <animated-number
             :number="teacherDashboard.quizStats[0].averageQuizzesSolved"
+            data-cy="averageQuizzesSolved"
           />
         </div>
         <div class="project-name">
