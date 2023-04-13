@@ -11,9 +11,9 @@
         </div>
       </div>
       <div class="items">
-        <div ref="uniqueQuizzesSolved" class="icon-wrapper">
+        <div ref="numUniqueAnsweredQuizzes" class="icon-wrapper">
           <animated-number
-            :number="teacherDashboard.quizStats[0].uniqueQuizzesSolved"
+            :number="teacherDashboard.quizStats[0].numUniqueAnsweredQuizzes"
           />
         </div>
         <div class="project-name">
@@ -35,7 +35,11 @@
       Comparison with previous course executions
     </h2>
     <div v-if="teacherDashboard != null" class="stats-container">
-      <div style="flex-direction: column">
+      <div
+        v-if="teacherDashboard.quizStats.length > 1"
+        style="flex-direction: row"
+        data-cy="quiz_stat_graph"
+      >
         <h4 style="color: white; background-color: #2c3e50">Quizzes</h4>
         <div class="bar-chart">
           <div ref="quizStatsBarChart">

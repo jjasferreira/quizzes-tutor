@@ -4,8 +4,8 @@
       :labels="labelsArray"
       :label1="numQuizzesLabel"
       :data1="numQuizzesArray"
-      :label2="numUniqueQuizzesLabel"
-      :data2="numUniqueQuizzesArray"
+      :label2="numUniqueAnsweredQuizzesLabel"
+      :data2="numUniqueAnsweredQuizzesArray"
       :label3="numAverageQuizzesLabel"
       :data3="numAverageQuizzesArray"
       :colors="colors"
@@ -27,8 +27,8 @@ export default class TeacherGraphsView extends Vue {
   labelsArray!: string[];
   numQuizzesLabel: string = 'Total Available';
   numQuizzesArray!: number[];
-  numUniqueQuizzesLabel: string = 'Solved (Unique)';
-  numUniqueQuizzesArray!: number[];
+  numUniqueAnsweredQuizzesLabel: string = 'Solved (Unique)';
+  numUniqueAnsweredQuizzesArray!: number[];
   numAverageQuizzesLabel: string = 'Solved (Unique, Average per Student)';
   numAverageQuizzesArray!: number[];
   colors: string[] = ['#c0392b', '#2980b9', '#1abc9c'];
@@ -46,8 +46,8 @@ export default class TeacherGraphsView extends Vue {
       .map((quizStats: QuizStats) => quizStats.numQuizzes)
       .reverse();
 
-    this.numUniqueQuizzesArray = this.quizStats
-      .map((quizStats: QuizStats) => quizStats.uniqueQuizzesSolved)
+    this.numUniqueAnsweredQuizzesArray = this.quizStats
+      .map((quizStats: QuizStats) => quizStats.numUniqueAnsweredQuizzes)
       .reverse();
 
     this.numAverageQuizzesArray = this.quizStats
