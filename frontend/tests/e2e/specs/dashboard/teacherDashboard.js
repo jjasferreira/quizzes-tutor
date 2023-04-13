@@ -50,5 +50,8 @@ describe('Teacher Dashboard', () => {
         // verificar que não são mostrados gráficos
         cy.get('[data-cy="question_stat_graph"]').should('not.exist');
         cy.get('[data-cy="quiz_stat_graph"]').should('not.exist');
+
+        cy.removeQuestionSubmission();
+        cy.deleteQuestionsAndAnswers();
     })
 })
