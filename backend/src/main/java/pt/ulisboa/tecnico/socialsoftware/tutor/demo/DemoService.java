@@ -342,16 +342,15 @@ public class DemoService {
         AuthDto authDemoTeacherDto = authUserService.demoTeacherAuth();
 
         // Get demo course and demo teacher
-        Course demoCourse = courseRepository.findById(courseId)
-                .orElseThrow(() -> new TutorException(ErrorMessage.COURSE_NOT_FOUND));
-        CourseExecution courseExecution19 = courseExecutionRepository.findById(courseExecutionId)
-                .orElseThrow(() -> new TutorException(ErrorMessage.COURSE_EXECUTION_NOT_FOUND));
+        Course newCourse = createCourse("New Course");
         User demoTeacher = userRepository.findById(authDemoTeacherDto.getUser().getId())
                 .orElseThrow(() -> new TutorException(ErrorMessage.USER_NOT_FOUND));
 
         // Create 3 course executions for the demo course
         // 2019
-        // Add students to demo course execution
+        CourseExecution courseExecution19 = createCourseExecution(newCourse, "2019NewCourse", "1 Semestre 2019/2020", DateHandler.toLocalDateTime("2022-12-31"));
+        // Add demo teacher and students to course execution
+        addUserToCourseExecution(courseExecution19, demoTeacher);
         Student student119 = createStudent("Student 1 19/20", "s119", "s119@ist.pt");
         Student student219 = createStudent("Student 2 19/20", "s219", "s219@ist.pt");
         addUserToCourseExecution(courseExecution19, student119);
@@ -367,26 +366,26 @@ public class DemoService {
             * UniqueQuizzesSolved = 4
             * AverageQuizzesSolved = (4 + 1) / 2 = 2.5 */
         Quiz quiz119 = createQuiz(courseExecution19, "Quiz 1 2019");
-        QuizQuestion quizQuestion119 = createQuizQuestion(demoCourse, quiz119, 0);
+        QuizQuestion quizQuestion119 = createQuizQuestion(newCourse, quiz119, 0);
         QuizAnswer quizAnswer1191 = createQuizAnswer(quiz119, student119);
         QuizAnswer quizAnswer1192 = createQuizAnswer(quiz119, student219);
 
         Quiz quiz219 = createQuiz(courseExecution19, "Quiz 2 2019");
-        QuizQuestion quizQuestion219 = createQuizQuestion(demoCourse, quiz219, 0);
+        QuizQuestion quizQuestion219 = createQuizQuestion(newCourse, quiz219, 0);
         QuizAnswer quizAnswer2192 = createQuizAnswer(quiz219, student119);
 
         Quiz quiz319 = createQuiz(courseExecution19, "Quiz 3 2019");
-        QuizQuestion quizQuestion319 = createQuizQuestion(demoCourse, quiz319, 0);
+        QuizQuestion quizQuestion319 = createQuizQuestion(newCourse, quiz319, 0);
         QuizAnswer quizAnswer3192 = createQuizAnswer(quiz319, student119);
 
         Quiz quiz419 = createQuiz(courseExecution19, "Quiz 4 2019");
-        QuizQuestion quizQuestion419 = createQuizQuestion(demoCourse, quiz419, 0);
+        QuizQuestion quizQuestion419 = createQuizQuestion(newCourse, quiz419, 0);
         QuizAnswer quizAnswer4191 = createQuizAnswer(quiz419, student119);
 
         Quiz quiz519 = createQuiz(courseExecution19, "Quiz 5 2019");
 
         // 2022
-        CourseExecution courseExecution22 = createCourseExecution(demoCourse, "2022DemoCourse", "1 Semestre 2022/2023", DateHandler.toLocalDateTime("2022-12-31"));
+        CourseExecution courseExecution22 = createCourseExecution(newCourse, "2022NewCourse", "1 Semestre 2022/2023", DateHandler.toLocalDateTime("2022-12-31"));
         // Add demo teacher and students to course execution
         addUserToCourseExecution(courseExecution22, demoTeacher);
         Student student122 = createStudent("Student 1 22/23", "s122", "s122@ist.pt");
@@ -405,25 +404,25 @@ public class DemoService {
             * UniqueQuizzesSolved = 3
             * AverageQuizzesSolved = (3 + 2 + 2) / 3 = 2.33 */
         Quiz quiz122 = createQuiz(courseExecution22, "Quiz 1 2022");
-        QuizQuestion quizQuestion122 = createQuizQuestion(demoCourse, quiz122, 0);
+        QuizQuestion quizQuestion122 = createQuizQuestion(newCourse, quiz122, 0);
         QuizAnswer quizAnswer1221 = createQuizAnswer(quiz122, student122);
         QuizAnswer quizAnswer1222 = createQuizAnswer(quiz122, student222);
         QuizAnswer quizAnswer1223 = createQuizAnswer(quiz122, student322);
 
         Quiz quiz222 = createQuiz(courseExecution22, "Quiz 2 2022");
-        QuizQuestion quizQuestion222 = createQuizQuestion(demoCourse, quiz222, 0);
+        QuizQuestion quizQuestion222 = createQuizQuestion(newCourse, quiz222, 0);
         QuizAnswer quizAnswer2222 = createQuizAnswer(quiz222, student222);
         QuizAnswer quizAnswer2223 = createQuizAnswer(quiz222, student322);
 
         Quiz quiz322 = createQuiz(courseExecution22, "Quiz 3 2022");
 
         Quiz quiz422 = createQuiz(courseExecution22, "Quiz 4 2022");
-        QuizQuestion quizQuestion422 = createQuizQuestion(demoCourse, quiz422, 0);
+        QuizQuestion quizQuestion422 = createQuizQuestion(newCourse, quiz422, 0);
         QuizAnswer quizAnswer4221 = createQuizAnswer(quiz422, student122);
         QuizAnswer quizAnswer4222 = createQuizAnswer(quiz422, student222);
 
         // 2023
-        CourseExecution courseExecution23 = createCourseExecution(demoCourse, "2023DemoCourse", "1 Semestre 2023/2024", DateHandler.toLocalDateTime("2023-12-31"));
+        CourseExecution courseExecution23 = createCourseExecution(newCourse, "2023NewCourse", "1 Semestre 2023/2024", DateHandler.toLocalDateTime("2023-12-31"));
         // Add demo teacher and students to course execution
         addUserToCourseExecution(courseExecution23, demoTeacher);
         Student student123 = createStudent("Student 1 23/24", "s123", "s123@ist.pt");
@@ -439,14 +438,21 @@ public class DemoService {
             * UniqueQuizzesSolved = 2
             * AverageQuizzesSolved = (1 + 1) / 2 = 1 */
         Quiz quiz123 = createQuiz(courseExecution23, "Quiz 1 2023");
-        QuizQuestion quizQuestion123 = createQuizQuestion(demoCourse, quiz123, 0);
+        QuizQuestion quizQuestion123 = createQuizQuestion(newCourse, quiz123, 0);
         QuizAnswer quizAnswer123 = createQuizAnswer(quiz123, student122);
 
         Quiz quiz223 = createQuiz(courseExecution23, "Quiz 2 2023");
-        QuizQuestion quizQuestion223 = createQuizQuestion(demoCourse, quiz223, 0);
+        QuizQuestion quizQuestion223 = createQuizQuestion(newCourse, quiz223, 0);
         QuizAnswer quizAnswer223 = createQuizAnswer(quiz223, student222);
 
         Quiz quiz323 = createQuiz(courseExecution23, "Quiz 3 2023");
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public Course createCourse(String name) {
+        Course course = new Course(name, Course.Type.TECNICO);
+        courseRepository.save(course);
+        return course;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
