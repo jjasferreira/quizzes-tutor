@@ -71,7 +71,7 @@
       Comparison with previous course executions
     </h2>
     <div v-if="teacherDashboard != null" class="stats-container" style="gap: 30px;">
-      <div style="flex-direction: row">
+      <div v-if="teacherDashboard.quizStats.length > 1" style="flex-direction: row" data-cy="quiz_stat_graph">
         <h4 style="color: white; background-color: #2c3e50">Quizzes</h4>
         <div class="bar-chart">
           <div ref="quizStatsBarChart">
@@ -81,7 +81,7 @@
           </div>
         </div>
       </div>
-      <div style="flex-direction: row">
+      <div v-if="teacherDashboard.questionStats.length > 1" style="flex-direction: row" data-cy="question_stat_graph">
         <h4 style="color: white; background-color: #2c3e50">Questions</h4>
         <div class="bar-chart">
           <div ref="questionStatsBarChart">

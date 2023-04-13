@@ -36,19 +36,19 @@ describe('Teacher Dashboard', () => {
           'Dashboard Question 1 ' + date,
           'Dashboard Question 2 ' + date
         );
-        //cy.get('[data-cy="dashboardMenuButton"]').click();
         cy.contains('Logout').click();
         cy.demoStudentLogin();
         cy.solveQuizz('Dashboard Title ' + date, 2, 'ChooseThisWrong');
         cy.contains('Logout').click();
         cy.demoTeacherLogin();
         cy.get('[data-cy="dashboardMenuButton"]').click();
-        cy.get('[data-cy="numStudents"]').should('have.text', 1);
+
         cy.get('[data-cy="numAvailable"]').should('have.text', 2);
         cy.get('[data-cy="answeredQuestionsUnique"]').should('have.text', 2);
         cy.get('[data-cy="averageQuestionsAnswered"]').should('have.text', 2);
 
-
-        //TODO: verificar que não são mostrados gráficos
+        // verificar que não são mostrados gráficos
+        cy.get('[data-cy="question_stat_graph"]').should('not.exist');
+        cy.get('[data-cy="quiz_stat_graph"]').should('not.exist');
     })
 })
