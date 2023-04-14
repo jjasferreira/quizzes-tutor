@@ -12,10 +12,20 @@ describe('2023 Teacher Dashboard', () => {
     cy.get('[data-cy="numStudents"]').should('have.text', 5);
     cy.get('[data-cy="numMore75CorrectQuestions"]').should('have.text', 1);
     cy.get('[data-cy="numAtLeast3Quizzes"]').should('have.text', 2);
+    cy.get('[data-cy="numQuizzes"]').should('have.text', 3);
+    cy.get('[data-cy="numUniqueAnsweredQuizzes"]').should('have.text', 3);
+    cy.get('[data-cy="averageQuizzesSolved"]').should('have.text', 1.6);
+    cy.get('[data-cy="numAvailable"]').should('have.text', 0);
+    cy.get('[data-cy="answeredQuestionsUnique"]').should('have.text', 4);
+    cy.get('[data-cy="averageQuestionsAnswered"]').should('have.text', 2.6);
 
     // Check if the graphs are shown and logout
     cy.get('[data-cy="student_stat_graph"]').should('exist');
     cy.get('[data-cy="student_stat_graph"]').eq(0).scrollIntoView().wait(3000).screenshot("testImage");
+    cy.get('[data-cy="quiz_stats_graph"]').should('exist');
+    cy.get('[data-cy="quiz_stats_graph"]').eq(0).scrollIntoView().wait(3000).screenshot("testImage-quiz");
+    cy.get('[data-cy="question_stat_graph"]').should('exist');
+    cy.get('[data-cy="question_stat_graph"]').eq(0).scrollIntoView().wait(3000).screenshot("testImage-question");
     cy.contains('Logout').click();
 
     const PNG = require('pngjs').PNG;
@@ -39,6 +49,50 @@ describe('2023 Teacher Dashboard', () => {
         const numDiffPixels = pixelmatch(img1.data, img2.data, diff.data, width, height, { threshold: 0.1 });
 
 				// calculating a percent diff
+        const diffPercent = (numDiffPixels / (width * height) * 100);
+
+        expect(diffPercent).to.be.below(20);
+      });
+    });
+    cy.readFile(
+        './tests/e2e/base-reference/1baseImage-quiz.png', 'base64'
+    ).then(baseImage => {
+      cy.readFile(
+          './tests/e2e/screenshots/dashboard/1TeacherDashboard.js/testImage-quiz.png', 'base64'
+      ).then(testImage => {
+        // load both pictures
+        const img1 = PNG.sync.read(Buffer.from(baseImage, 'base64'));
+        const img2 = PNG.sync.read(Buffer.from(testImage, 'base64'));
+
+        const { width, height } = img1;
+        const diff = new PNG({ width, height });
+
+        // calling pixelmatch return how many pixels are different
+        const numDiffPixels = pixelmatch(img1.data, img2.data, diff.data, width, height, { threshold: 0.1 });
+
+        // calculating a percent diff
+        const diffPercent = (numDiffPixels / (width * height) * 100);
+
+        expect(diffPercent).to.be.below(20);
+      });
+    });
+    cy.readFile(
+        './tests/e2e/base-reference/1baseImage-question.png', 'base64'
+    ).then(baseImage => {
+      cy.readFile(
+          './tests/e2e/screenshots/dashboard/1TeacherDashboard.js/testImage-question.png', 'base64'
+      ).then(testImage => {
+        // load both pictures
+        const img1 = PNG.sync.read(Buffer.from(baseImage, 'base64'));
+        const img2 = PNG.sync.read(Buffer.from(testImage, 'base64'));
+
+        const { width, height } = img1;
+        const diff = new PNG({ width, height });
+
+        // calling pixelmatch return how many pixels are different
+        const numDiffPixels = pixelmatch(img1.data, img2.data, diff.data, width, height, { threshold: 0.1 });
+
+        // calculating a percent diff
         const diffPercent = (numDiffPixels / (width * height) * 100);
 
         expect(diffPercent).to.be.below(20);
