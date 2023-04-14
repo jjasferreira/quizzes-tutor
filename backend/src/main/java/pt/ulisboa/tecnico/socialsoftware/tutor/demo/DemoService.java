@@ -459,6 +459,7 @@ public class DemoService {
     private CourseExecution createCourseExecution(Course course, String acronym, String academicTerm, LocalDateTime endDate) {
         CourseExecution courseExecution = new CourseExecution(course, acronym, academicTerm, Course.Type.TECNICO, endDate);
         courseExecutionRepository.save(courseExecution);
+        courseRepository.save(course);
         return courseExecution;
     }
 
@@ -473,6 +474,7 @@ public class DemoService {
     public void addUserToCourseExecution(CourseExecution courseExecution, User user) {
         user.addCourse(courseExecution);
         userRepository.save(user);
+        courseExecutionRepository.save(courseExecution);
     }
 
     public Quiz createQuiz(CourseExecution courseExecution, String title) {
@@ -483,6 +485,7 @@ public class DemoService {
         quiz.setCreationDate(DateHandler.now());
         quiz.setAvailableDate(DateHandler.now());
         quizRepository.save(quiz);
+        courseExecutionRepository.save(courseExecution);
         return quiz;
     }
 
@@ -504,6 +507,8 @@ public class DemoService {
         questionAnswer.setAnswerDetails(answerDetails);
         questionAnswerRepository.save(questionAnswer);
         answerDetailsRepository.save(answerDetails);
+        quizAnswerRepository.save(quizAnswer);
+        quizQuestionRepository.save(quizQuestion);
         return questionAnswer;
     }
 
@@ -528,6 +533,7 @@ public class DemoService {
         questionRepository.save(newQuestion);
         optionRepository.save(optionA);
         optionRepository.save(optionB);
+        courseRepository.save(course);
         return newQuestion;
     }
 
@@ -541,6 +547,8 @@ public class DemoService {
         quizAnswer.setQuiz(quiz);
         quizAnswer.setStudent(student);
         quizAnswerRepository.save(quizAnswer);
+        quizRepository.save(quiz);
+        userRepository.save(student);
         return quizAnswer;
     }
 
@@ -549,6 +557,7 @@ public class DemoService {
         Question question = createQuestion(course, "Question Title");
         QuizQuestion quizQuestion = new QuizQuestion(quiz, question, seq);
         quizQuestionRepository.save(quizQuestion);
+        quizRepository.save(quiz);
         return quizQuestion;
     }
 
