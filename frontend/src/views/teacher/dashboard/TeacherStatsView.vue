@@ -6,6 +6,7 @@
         <div ref="numStudents" class="icon-wrapper">
           <animated-number
             :number="teacherDashboard.studentStats[0].numStudents"
+            data-cy="numStudents"
           />
         </div>
         <div class="project-name">
@@ -16,6 +17,7 @@
         <div ref="numMore75CorrectQuestions" class="icon-wrapper">
           <animated-number
             :number="teacherDashboard.studentStats[0].numMore75CorrectQuestions"
+            data-cy="numMore75CorrectQuestions"
           />
         </div>
         <div class="project-name">
@@ -26,6 +28,7 @@
         <div ref="numAtLeast3Quizzes" class="icon-wrapper">
           <animated-number
             :number="teacherDashboard.studentStats[0].numAtLeast3Quizzes"
+            data-cy="numAtLeast3Quizzes"
           />
         </div>
         <div class="project-name">
@@ -142,9 +145,9 @@
       <div
         v-if="teacherDashboard.studentStats.length > 1"
         style="flex-direction: row"
-        data-cy="question_stat_graph"
+        data-cy="student_stat_graph"
       >
-        <h4 style="color: white; background-color: #2c3e50">Questions</h4>
+        <h4 style="color: white; background-color: #2c3e50">Students</h4>
         <div class="bar-chart">
           <div ref="questionStatsBarChart">
             <student-chart

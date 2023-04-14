@@ -27,7 +27,7 @@ export default class StudentChart extends Vue {
   labelsArray!: string[];
   numStudentsLabel: string = 'Total Students';
   numStudentsArray!: number[];
-  numMore75CorrectQuestionsLabel: string = 'Solved (75% or more correct)';
+  numMore75CorrectQuestionsLabel: string = 'Solved (>75% correct)';
   numMore75CorrectQuestionsArray!: number[];
   numAtLeast3QuizzesLabel: string = 'Solved (at least 3 quizzes)';
   numAtLeast3QuizzesArray!: number[];

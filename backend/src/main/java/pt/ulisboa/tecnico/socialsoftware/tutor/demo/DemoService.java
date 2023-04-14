@@ -427,8 +427,14 @@ public class DemoService {
         addUserToCourseExecution(courseExecution23, demoTeacher);
         Student student123 = createStudent("Student 1 23/24", "s123", "s123@ist.pt");
         Student student223 = createStudent("Student 2 23/24", "s223", "s223@ist.pt");
+        Student student323 = createStudent("Student 3 23/24", "s323", "s323@ist.pt");
+        Student student423 = createStudent("Student 4 23/24", "s423", "s423@ist.pt");
+        Student student523 = createStudent("Student 5 23/24", "s523", "s523@ist.pt");
         addUserToCourseExecution(courseExecution23, student123);
         addUserToCourseExecution(courseExecution23, student223);
+        addUserToCourseExecution(courseExecution23, student323);
+        addUserToCourseExecution(courseExecution23, student423);
+        addUserToCourseExecution(courseExecution23, student523);
         /* Add quizzes to course execution
             * Quiz 1 solved by student 1
             * Quiz 2 solved by student 2
@@ -438,14 +444,43 @@ public class DemoService {
             * UniqueQuizzesSolved = 2
             * AverageQuizzesSolved = (1 + 1) / 2 = 1 */
         Quiz quiz123 = createQuiz(courseExecution23, "Quiz 1 2023");
-        QuizQuestion quizQuestion123 = createQuizQuestion(newCourse, quiz123, 0);
-        QuizAnswer quizAnswer123 = createQuizAnswer(quiz123, student122);
 
         Quiz quiz223 = createQuiz(courseExecution23, "Quiz 2 2023");
-        QuizQuestion quizQuestion223 = createQuizQuestion(newCourse, quiz223, 0);
-        QuizAnswer quizAnswer223 = createQuizAnswer(quiz223, student222);
+        QuizAnswer quizAnsA223 = createQuizAnswer(quiz223, student123);
+        QuizAnswer quizAnsB223 = createQuizAnswer(quiz223, student223);
 
         Quiz quiz323 = createQuiz(courseExecution23, "Quiz 3 2023");
+        QuizAnswer quizAnsA323 = createQuizAnswer(quiz323, student123);
+        QuizAnswer quizAnsB323 = createQuizAnswer(quiz323, student223);
+
+
+        // "3 students submit the quiz with 4/4, 3/4 and 1/4 correct answers"
+        QuizQuestion quizQuestion1 = createQuizQuestion(newCourse, quiz123, 0);
+        QuizQuestion quizQuestion2 = createQuizQuestion(newCourse, quiz123, 1);
+        QuizQuestion quizQuestion3 = createQuizQuestion(newCourse, quiz123, 2);
+        QuizQuestion quizQuestion4 = createQuizQuestion(newCourse, quiz123, 3);
+
+        QuizAnswer quizAns1 = createQuizAnswer(quiz123, student123);
+        createQuestionAnswer(quizAns1, quizQuestion1, true);
+        createQuestionAnswer(quizAns1, quizQuestion2, true);
+        createQuestionAnswer(quizAns1, quizQuestion3, true);
+        createQuestionAnswer(quizAns1, quizQuestion4, true);
+
+        QuizAnswer quizAns2 = createQuizAnswer(quiz123, student223);
+        createQuestionAnswer(quizAns2, quizQuestion1, true);
+        createQuestionAnswer(quizAns2, quizQuestion2, true);
+        createQuestionAnswer(quizAns2, quizQuestion3, true);
+        createQuestionAnswer(quizAns2, quizQuestion4, false);
+
+        QuizAnswer quizAns3 = createQuizAnswer(quiz123, student323);
+        createQuestionAnswer(quizAns3, quizQuestion1, true);
+        createQuestionAnswer(quizAns3, quizQuestion2, false);
+        createQuestionAnswer(quizAns3, quizQuestion3, false);
+        createQuestionAnswer(quizAns3, quizQuestion4, false);
+
+        // "1 student only answers 1 question"
+        QuizAnswer quizAns5 = createQuizAnswer(quiz123, student523);
+        createQuestionAnswer(quizAns5, quizQuestion1, true);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
