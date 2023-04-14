@@ -92,7 +92,7 @@
       <div
         v-if="teacherDashboard.quizStats.length > 1"
         style="flex-direction: row"
-        data-cy="quiz_stat_graph"
+        data-cy="quiz_stats_graph"
       >
         <h4 style="color: white; background-color: #2c3e50">Quizzes</h4>
         <div class="bar-chart">

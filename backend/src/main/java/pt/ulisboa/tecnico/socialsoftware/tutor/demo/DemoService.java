@@ -348,7 +348,7 @@ public class DemoService {
 
         // Create 3 course executions for the demo course
         // 2019
-        CourseExecution courseExecution19 = createCourseExecution(newCourse, "2019NewCourse", "1 Semestre 2019/2020", DateHandler.toLocalDateTime("2022-12-31"));
+        CourseExecution courseExecution19 = createCourseExecution(newCourse, "2019NewCourse", "1 Semestre 2019/2020", DateHandler.toLocalDateTime("2019-12-31"));
         // Add demo teacher and students to course execution
         addUserToCourseExecution(courseExecution19, demoTeacher);
         Student student119 = createStudent("Student 1 19/20", "s119", "s119@ist.pt");
