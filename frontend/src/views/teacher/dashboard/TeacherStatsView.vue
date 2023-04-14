@@ -139,6 +139,20 @@
           </div>
         </div>
       </div>
+      <div
+        v-if="teacherDashboard.studentStats.length > 1"
+        style="flex-direction: row"
+        data-cy="question_stat_graph"
+      >
+        <h4 style="color: white; background-color: #2c3e50">Questions</h4>
+        <div class="bar-chart">
+          <div ref="questionStatsBarChart">
+            <student-chart
+              :student-stats="teacherDashboard.studentStats"
+            ></student-chart>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -150,9 +164,15 @@ import AnimatedNumber from '@/components/AnimatedNumber.vue';
 import TeacherDashboard from '@/models/dashboard/TeacherDashboard';
 import TeacherGraphsView from '@/views/teacher/dashboard/TeacherGraphsView.vue';
 import QuestionChart from '@/views/teacher/dashboard/QuestionChart.vue';
+import StudentChart from '@/views/teacher/dashboard/StudentChart.vue';
 
 @Component({
-  components: { AnimatedNumber, TeacherGraphsView, QuestionChart },
+  components: {
+    StudentChart,
+    AnimatedNumber,
+    TeacherGraphsView,
+    QuestionChart,
+  },
 })
 export default class TeacherStatsView extends Vue {
   @Prop() readonly dashboardId!: number;
@@ -162,6 +182,7 @@ export default class TeacherStatsView extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.teacherDashboard = await RemoteServices.getTeacherDashboard();
+      console.log(this.teacherDashboard);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
