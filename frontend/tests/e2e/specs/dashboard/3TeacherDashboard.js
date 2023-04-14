@@ -7,7 +7,7 @@ describe('Teacher Dashboard Test', () => {
     })
 
     it('test only one execution (no stats)', () => {
-      
+
         cy.get('[data-cy="numAvailable"]').should('have.text', 0);
         cy.get('[data-cy="answeredQuestionsUnique"]').should('have.text', 0);
         cy.get('[data-cy="averageQuestionsAnswered"]').should('have.text', 0);
@@ -46,6 +46,9 @@ describe('Teacher Dashboard Test', () => {
         cy.solveQuizz('Dashboard Title ' + date, 2, 'ChooseThisWrong');
         cy.contains('Logout').click();
         cy.demoTeacherLogin();
+        
+        cy.deleteTeacherDashboard();
+        
         cy.get('[data-cy="dashboardMenuButton"]').click();
 
         cy.get('[data-cy="numAvailable"]').should('have.text', 2);

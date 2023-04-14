@@ -17,6 +17,15 @@ function dbCommand(command) {
   );
 }
 
+Cypress.Commands.add('deleteTeacherDashboard', () => {
+  dbCommand(`delete from teacher_dashboard_quiz_stats;
+  delete from teacher_dashboard_question_stats;
+  delete from student_stats;
+  delete from quiz_stats;
+  delete from question_stats;
+  delete from teacher_dashboard;`)
+})
+
 Cypress.Commands.add('beforeEachTournament', () => {
   dbCommand(`
       WITH tmpCourse as (SELECT ce.course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course')      
