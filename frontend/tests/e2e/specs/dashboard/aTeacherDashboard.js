@@ -1,4 +1,4 @@
-describe('Teacher Dashboard', () => {
+describe('a Teacher Dashboard', () => {
 
   it('test if the 2022 values are correct and the 2022 and 2019 graphs are shown', () => {
     // Login as demo teacher and navigate to change course menu

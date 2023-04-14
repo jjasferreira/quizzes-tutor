@@ -2,6 +2,7 @@ describe('Dashboard', () => {
   let date;
 
   beforeEach(() => {
+    cy.deleteQuestionsAndAnswers();
 
     cy.request('http://localhost:8080/auth/demo/teacher')
       .as('loginResponse')
@@ -46,6 +47,10 @@ describe('Dashboard', () => {
   });
 
   afterEach(() => {
+    cy.deleteWeeklyScores();
+    cy.deleteFailedAnswers();
+    cy.deleteDifficultQuestions();
+    cy.deleteQuestionsAndAnswers();
   });
 
   it('student accesses dashboard', () => {
