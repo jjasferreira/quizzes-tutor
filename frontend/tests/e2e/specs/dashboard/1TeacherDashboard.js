@@ -26,7 +26,7 @@ describe('2023 Teacher Dashboard', () => {
       './tests/e2e/base-reference/1baseImage.png', 'base64'
     ).then(baseImage => {
       cy.readFile(
-        './tests/e2e/screenshots/1TeacherDashboard.js/testImage.png', 'base64'
+        './tests/e2e/screenshots/dashboard/1TeacherDashboard.js/testImage.png', 'base64'
       ).then(testImage => {
 				// load both pictures
         const img1 = PNG.sync.read(Buffer.from(baseImage, 'base64'));
