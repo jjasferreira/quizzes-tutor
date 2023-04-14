@@ -7,6 +7,11 @@ describe('Teacher Dashboard Test', () => {
     })
 
     it('test only one execution (no stats)', () => {
+      
+        cy.get('[data-cy="numAvailable"]').should('have.text', 0);
+        cy.get('[data-cy="answeredQuestionsUnique"]').should('have.text', 0);
+        cy.get('[data-cy="averageQuestionsAnswered"]').should('have.text', 0);
+
         let date = new Date();
         cy.addTopicAndAssessment();
 
