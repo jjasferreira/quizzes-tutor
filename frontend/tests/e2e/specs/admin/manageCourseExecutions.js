@@ -1,7 +1,5 @@
 describe('Administration walkthrough', () => {
   beforeEach(() => {
-    cy.deleteQuestionsAndAnswers();
-    cy.cleanTestCourses();
     cy.demoAdminLogin();
     cy.get('[data-cy="administrationMenuButton"]').click();
     cy.get('[data-cy="manageCoursesMenuButton"]').click({ force: true });
