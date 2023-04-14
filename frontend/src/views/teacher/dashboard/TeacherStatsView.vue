@@ -72,14 +72,6 @@
           <p>Average Answered Questions</p>
         </div>
       </div>
-      <div class="items">
-        <div ref="numQuizzes" class="icon-wrapper">
-          <animated-number :number="teacherDashboard.quizStats[0].numQuizzes" />
-        </div>
-        <div class="project-name">
-          <p>Number of quizzes</p>
-        </div>
-      </div>
     </div>
     <h2 style="margin-bottom: 10px">
       Comparison with previous course executions

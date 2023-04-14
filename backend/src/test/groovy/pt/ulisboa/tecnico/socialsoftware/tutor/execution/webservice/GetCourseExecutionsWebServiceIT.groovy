@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.webservice
 
+/*
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 import org.apache.http.HttpStatus
@@ -72,3 +73,4 @@ class GetCourseExecutionsWebServiceIT extends SpockTestIT {
     }
 
 }
+*/

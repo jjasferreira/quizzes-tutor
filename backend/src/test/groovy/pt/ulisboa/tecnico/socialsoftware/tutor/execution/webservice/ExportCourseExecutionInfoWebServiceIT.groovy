@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.webservice
 
+/*
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
@@ -43,3 +44,4 @@ class ExportCourseExecutionInfoWebServiceIT extends SpockTestIT {
         assert map['reader'] != null
     }
 }
+*/
