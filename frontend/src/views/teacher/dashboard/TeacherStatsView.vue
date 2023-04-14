@@ -46,7 +46,7 @@
           <animated-number :number="teacherDashboard.questionStats[0].answeredQuestionsUnique" data-cy="answeredQuestionsUnique"/>
         </div>
         <div class="project-name">
-          <p>Number of Questions Solves (Unique)</p>
+          <p>Number of Questions Solved (Unique)</p>
         </div>
       </div>
       <!-------------------->
